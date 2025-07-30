@@ -1,0 +1,5 @@
+# Dockerfile for Couchbase Edge Server
+FROM couchbase/edge-server:1.0.0
+
+# This Dockerfile simply extends the official image
+# All configuration is handled via docker-compose volumes 

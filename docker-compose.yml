@@ -1,0 +1,85 @@
+services:
+  # Official Couchbase Edge Server
+  couchbase-edge-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.edge-server
+    platform: linux/amd64
+    container_name: couchbase-edge-server
+    ports:
+      - "59840:59840"  # Edge Server REST API
+    volumes:
+      - ./edge-server-config.json:/opt/couchbase-edge-server/etc/config.json
+      - ./data/edge-server:/opt/edge-server/data
+      - ./data/edge-server/logs:/opt/edge-server/logs
+    networks:
+      - couchbase-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:59840/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      - GOMAXPROCS=2
+      - GOMEMLIMIT=512MiB
+
+  # Java CPG CBLite Application
+  java-cpg-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile.java
+    platform: linux/amd64
+    container_name: java-cpg-app
+    depends_on:
+      couchbase-edge-server:
+        condition: service_healthy
+    volumes:
+      - ./data/rpi-cpg-line1-01:/app/data/rpi-cpg-line1-01
+      - ./src:/app/src
+      - ./pom.xml:/app/pom.xml
+    working_dir: /app
+    networks:
+      - couchbase-network
+    environment:
+      - EDGE_SERVER_HOST=couchbase-edge-server
+      - EDGE_SERVER_PORT=59840
+      - EDGE_SERVER_DATABASE=manufacturing
+      - APP_SERVICES_CLUSTER=your-cluster.apps.cloud.couchbase.com
+      - APP_SERVICES_API_KEY=your-api-key
+      - JAVA_OPTS=-Xmx512m -Xms256m
+      # CPG-specific environment variables
+      - DEVICE_ID=rpi-cpg-line1-01
+      - MACHINE_ID=MACHINE_001
+      - MACHINE_TYPE=beverage_filling_line
+      - PRODUCTION_LINE=BEVERAGE_LINE_A
+      - PRODUCT_TYPE=carbonated_beverage
+      # Timing configuration for CPG operations
+      - WRITE_INTERVAL_SECONDS=30
+      - WRITE_TIMEOUT_SECONDS=10
+      - SYNC_TIMEOUT_SECONDS=60
+      - MAX_DOCUMENTS_PER_BATCH=5
+    command: >
+      bash -c "
+        echo 'Building CPG application...' &&
+        mvn clean compile -q &&
+        echo 'Starting CPG CBLite application with telemetry data writing...' &&
+        java -cp target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/dev/stdout) com.couchbase.example.iot_device.CPGIoTTelemetryGenerator
+      "
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/data/manufacturing.cblite2/db.sqlite3"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  couchbase-network:
+    driver: bridge
+
+volumes:
+  edge-server-data:
+    driver: local
+  cblite-data:
+    driver: local 

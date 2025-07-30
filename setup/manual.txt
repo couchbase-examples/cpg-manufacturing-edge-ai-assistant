@@ -1,0 +1,1310 @@
+CPG MANUFACTURING EQUIPMENT - TECHNICAL REFERENCE MANUAL
+================================================================
+
+DOCUMENT INFORMATION
+====================
+Version: 2.0
+Created: 2024
+Purpose: Complete technical reference and operational guide
+Scope: CPG Manufacturing Equipment - All Machine Types
+Classification: Technical Manual - Error Codes, Procedures, Safety
+
+================================================================
+TABLE OF CONTENTS
+================================================================
+
+1. SAFETY PROCEDURES AND REQUIREMENTS
+2. INSTALLATION PROCEDURES
+3. EQUIPMENT SETUP AND COMMISSIONING
+4. PRODUCT ASSEMBLY PROCEDURES
+5. OPERATIONAL PROCEDURES
+6. ERROR CODE TROUBLESHOOTING
+7. PREVENTIVE MAINTENANCE
+8. EMERGENCY PROCEDURES
+9. TECHNICAL SPECIFICATIONS
+10. QUALITY CONTROL PROCEDURES
+11. TRAINING REQUIREMENTS
+12. SPARE PARTS INVENTORY
+13. ENVIRONMENTAL COMPLIANCE
+
+================================================================
+1. SAFETY PROCEDURES AND REQUIREMENTS
+================================================================
+
+1.1 GENERAL SAFETY REQUIREMENTS
+--------------------------------
+- All personnel must complete safety training before equipment access
+- Personal Protective Equipment (PPE) mandatory at all times
+- Follow Lockout/Tagout (LOTO) procedures for all maintenance
+- Emergency stop buttons must be tested daily
+- Safety guards must remain in place during operation
+- Only qualified personnel may perform electrical work
+
+1.2 PERSONAL PROTECTIVE EQUIPMENT (PPE)
+---------------------------------------
+REQUIRED PPE:
+- Safety glasses (ANSI Z87.1 compliant)
+- Steel-toed safety shoes
+- Hard hat in designated areas
+- Hearing protection (>85dB environments)
+- Cut-resistant gloves (Level 3 minimum)
+- Arc-rated clothing for electrical work
+
+1.3 LOCKOUT/TAGOUT (LOTO) PROCEDURES
+------------------------------------
+ENERGY ISOLATION STEPS:
+1. Notify all affected personnel
+2. Identify all energy sources
+3. Shut down equipment using normal procedures
+4. Isolate energy sources (electrical, pneumatic, hydraulic)
+5. Apply locks and tags to isolation points
+6. Verify zero energy state
+7. Test equipment cannot be restarted
+
+ENERGY RESTORATION:
+1. Remove all tools and personnel from equipment
+2. Replace all guards and safety devices
+3. Remove locks and tags (only by person who applied)
+4. Notify personnel of restoration
+5. Restart equipment using normal procedures
+
+1.4 CONFINED SPACE ENTRY
+-------------------------
+BEFORE ENTRY:
+- Obtain entry permit
+- Test atmosphere (oxygen, toxicity, combustibility)
+- Verify ventilation systems operational
+- Station attendant outside space
+- Establish communication procedures
+- Have rescue equipment ready
+
+1.5 CHEMICAL SAFETY
+-------------------
+CLEANING SOLVENTS:
+- Use only approved cleaning chemicals
+- Ensure adequate ventilation
+- Store chemicals in designated areas
+- Follow SDS (Safety Data Sheet) requirements
+- Use proper disposal procedures
+- Have spill cleanup materials available
+
+================================================================
+2. INSTALLATION PROCEDURES
+================================================================
+
+2.1 SITE PREPARATION
+--------------------
+FACILITY REQUIREMENTS:
+- Concrete pad minimum 6 inches thick
+- Level within 0.002 inches per foot
+- Adequate drainage around equipment
+- Minimum 3 feet clearance on all sides
+- Overhead clearance 10 feet minimum
+- Compressed air supply 100 PSI minimum
+
+UTILITIES REQUIRED:
+- Electrical: 480V 3-phase, 60Hz
+- Compressed air: 100 PSI, -40°F dew point
+- Facility water: 40-80 PSI, potable quality
+- Drain connection: 4-inch minimum diameter
+- Network connection: Ethernet CAT6
+
+2.2 MECHANICAL INSTALLATION
+---------------------------
+EQUIPMENT POSITIONING:
+1. Use certified rigging equipment
+2. Position equipment on foundation
+3. Level within specification (±0.002")
+4. Install vibration dampeners
+5. Secure anchor bolts to torque specification
+6. Verify alignment with laser equipment
+
+FOUNDATION REQUIREMENTS:
+- Reinforced concrete minimum 3000 PSI
+- Steel reinforcement per structural drawings
+- Allow 28 days curing before equipment installation
+- Provide embedded anchor bolt templates
+- Include conduit runs for utilities
+
+2.3 ELECTRICAL INSTALLATION
+---------------------------
+POWER CONNECTIONS:
+1. Verify incoming power quality
+2. Install main disconnect switch
+3. Connect motor starter circuits
+4. Install control transformer
+5. Connect control circuits
+6. Verify proper grounding
+7. Test phase rotation
+8. Perform megger testing
+
+CONTROL SYSTEM WIRING:
+- Use shielded cable for analog signals
+- Separate power and control wiring
+- Maintain proper bend radius
+- Label all wires per drawing
+- Test continuity before energizing
+
+2.4 PNEUMATIC INSTALLATION
+---------------------------
+AIR SYSTEM SETUP:
+1. Install main air supply line
+2. Connect air preparation unit (FRL)
+3. Install pressure regulators
+4. Connect actuator lines
+5. Test all connections for leaks
+6. Set operating pressures
+7. Test emergency air dump
+
+2.5 NETWORK INSTALLATION
+------------------------
+COMMUNICATION SETUP:
+1. Install network infrastructure
+2. Configure IP addresses
+3. Test network connectivity
+4. Install monitoring software
+5. Configure data logging
+6. Test remote access capabilities
+
+================================================================
+3. EQUIPMENT SETUP AND COMMISSIONING
+================================================================
+
+3.1 INITIAL STARTUP SEQUENCE
+-----------------------------
+PRE-STARTUP CHECKLIST:
+□ All safety systems tested
+□ Emergency stops functional
+□ Guards properly installed
+□ All utilities connected
+□ Control system programmed
+□ Mechanical systems lubricated
+□ Personnel trained on operation
+
+STARTUP PROCEDURE:
+1. Energize control system
+2. Perform system self-test
+3. Check all I/O points
+4. Test manual mode operation
+5. Calibrate sensors and instruments
+6. Perform automatic cycle test
+7. Document all parameters
+
+3.2 CALIBRATION PROCEDURES
+--------------------------
+SENSOR CALIBRATION:
+Temperature Sensors:
+- Use NIST traceable calibrator
+- Check at 3 points minimum
+- Record calibration data
+- Apply correction factors
+- Schedule recalibration
+
+Pressure Sensors:
+- Use deadweight tester
+- Calibrate at 0%, 50%, 100% scale
+- Check repeatability
+- Verify alarm setpoints
+- Document certificates
+
+3.3 PERFORMANCE VERIFICATION
+----------------------------
+ACCEPTANCE TEST CRITERIA:
+- Speed accuracy: ±1% of setpoint
+- Position accuracy: ±0.001 inches
+- Temperature control: ±2°F
+- Pressure control: ±2 PSI
+- Cycle time: Within specification
+- Reject rate: <0.1%
+
+TEST PROCEDURES:
+1. Run continuous operation for 2 hours
+2. Monitor all critical parameters
+3. Record performance data
+4. Verify alarm functions
+5. Test emergency stops
+6. Document results
+
+================================================================
+4. PRODUCT ASSEMBLY PROCEDURES
+================================================================
+
+4.1 PACKAGING LINE SETUP
+-------------------------
+PRODUCT CHANGEOVER:
+1. Complete current production run
+2. Clean all product contact surfaces
+3. Change format parts per recipe
+4. Adjust conveyor guides
+5. Set filling parameters
+6. Calibrate weighing systems
+7. Update quality checkpoints
+
+FILLING STATION SETUP:
+- Install product-specific nozzles
+- Set fill volume parameters
+- Calibrate flow meters
+- Test level sensors
+- Verify shut-off valves
+- Check for cross-contamination
+
+4.2 CONTAINER HANDLING
+----------------------
+BOTTLE PREPARATION:
+1. Inspect incoming containers
+2. Remove protective packaging
+3. Pre-rinse if required
+4. Orient containers properly
+5. Feed into conveyor system
+6. Monitor reject rates
+
+CONVEYOR SETUP:
+- Adjust guide rails for container size
+- Set conveyor speed for line rate
+- Verify accumulation zones
+- Test pressure-less accumulation
+- Check alignment throughout line
+
+4.3 LABELING PROCEDURES
+-----------------------
+LABEL APPLICATION:
+1. Load label roll on dispenser
+2. Thread through applicator
+3. Set application pressure
+4. Adjust label position
+5. Test adhesion quality
+6. Verify print quality
+7. Check wrap-around labels
+
+PRINT SYSTEM SETUP:
+- Install appropriate ribbon
+- Load date/lot code format
+- Verify print position
+- Test print quality
+- Set print speed
+- Monitor ribbon usage
+
+4.4 CAPPING OPERATIONS
+----------------------
+CAP FEEDING:
+1. Fill cap hopper
+2. Verify cap orientation
+3. Adjust torque settings
+4. Test cap placement
+5. Check seal integrity
+6. Monitor cap consumption
+
+QUALITY CHECKS:
+- Torque verification (±10% specification)
+- Seal integrity testing
+- Visual inspection requirements
+- Automatic rejection criteria
+- Statistical sampling procedures
+
+================================================================
+5. OPERATIONAL PROCEDURES
+================================================================
+
+5.1 NORMAL OPERATION
+--------------------
+STARTUP SEQUENCE:
+1. Verify all safety systems active
+2. Check utility supplies available
+3. Review production schedule
+4. Perform pre-operational inspection
+5. Start equipment in sequence
+6. Monitor startup parameters
+7. Begin production when stable
+
+OPERATING PARAMETERS:
+Line Speed: 150-600 containers/minute
+Fill Accuracy: ±1% of target volume
+Temperature Control: ±2°F of setpoint
+Pressure Settings: Per product specification
+Quality Sampling: Every 15 minutes
+
+5.2 PRODUCT CHANGEOVER
+----------------------
+CHANGEOVER PROCEDURE:
+1. Stop current production
+2. Clear all product from system
+3. Clean product contact surfaces
+4. Install new format parts
+5. Load new product recipe
+6. Perform test runs
+7. Release for production
+
+CLEANING REQUIREMENTS:
+- Use approved cleaning solutions
+- Follow CIP (Clean-in-Place) procedures
+- Rinse with potable water
+- Sanitize if required
+- Air dry before production
+- Document cleaning verification
+
+5.3 QUALITY CONTROL DURING OPERATION
+------------------------------------
+CONTINUOUS MONITORING:
+□ Fill weight checks every 15 minutes
+□ Visual inspection ongoing
+□ Package integrity verification
+□ Label placement accuracy
+□ Code date verification
+□ Metal detection testing
+□ Statistical process control
+
+CORRECTIVE ACTIONS:
+Out-of-Spec Conditions:
+1. Stop production immediately
+2. Segregate suspect product
+3. Identify root cause
+4. Make necessary adjustments
+5. Verify correction effective
+6. Resume production
+7. Document incident
+
+================================================================
+6. ERROR CODE TROUBLESHOOTING
+================================================================
+
+ERROR CODE QUICK REFERENCE
+---------------------------
+E001 - Non-volatile Memory Endurance Exceeded (Medium)
+E004 - Motor Overtemperature (Critical)
+E005 - IPM Fault (Critical)
+E009 - Bus Undervoltage (High)
+E010 - Bus Overvoltage (High)
+E012 - Home Search Failed (High)
+E014 - Communications Network Problem (High)
+E018 - Overspeed Fault (Critical)
+E019 - Excess Position Error (High)
+E022 - Motor Thermal Protection Fault (Critical)
+E023 - IPM Thermal Protection Fault (Critical)
+E024 - Excess Velocity Error (High)
+E027 - Axis Not Homed (Medium)
+E030 - Encoder Communication Fault (High)
+E034 - Ground Fault (Critical)
+E036 - Power Circuitry Overtemperature (Critical)
+E037 - AC Line Loss (Critical)
+E043 - Drive Enable Input (Medium)
+E045 - Sensor Failure (Medium)
+E048 - Overcurrent Trip (High)
+E050 - Memory Parity Error (Critical)
+E052 - Communication Timeout (Medium)
+
+DETAILED TROUBLESHOOTING
+
+ERROR E004: MOTOR OVERTEMPERATURE
+Problem Cause:
+- Motor temperature exceeded safe operating limits (>155°C)
+- Inadequate cooling or ventilation
+- Overloading conditions
+- Blocked cooling vents or fans
+
+Symptoms:
+- Motor running hot to touch
+- Reduced performance
+- Thermal protection activation
+- Unusual motor noise
+
+Corrective Actions:
+1. IMMEDIATE: Stop machine operation immediately
+2. SAFETY: Allow motor to cool completely before inspection
+3. CHECK: Verify cooling system operation and clear blockages
+4. INSPECT: Check for overloading conditions
+5. TEST: Verify motor current within specifications
+6. RESUME: Only after temperature returns to normal
+
+Escalation: Critical - Operations Supervisor Required
+
+ERROR E005: IPM FAULT
+Problem Cause:
+- Intelligent Power Module fault condition detected
+- Power semiconductor failure
+- Overcurrent or short circuit condition
+- Gate driver circuit malfunction
+
+Corrective Actions:
+1. IMMEDIATE: Disconnect power to drive system
+2. SAFETY: Lock out and tag out (LOTO) procedures
+3. INSPECT: Check for visible damage to power connections
+4. TEST: Measure motor winding resistance
+5. REPLACE: IPM module replacement required
+6. VERIFY: Complete system checkout before restart
+
+Escalation: Critical - Certified Technician Required
+
+ERROR E034: GROUND FAULT
+Problem Cause:
+- Ground fault condition detected in motor circuit
+- Insulation breakdown in motor windings
+- Moisture ingress in motor or cables
+- Cable damage exposing conductors
+
+Corrective Actions:
+1. IMMEDIATE: De-energize system completely
+2. SAFETY: Implement lockout/tagout procedures
+3. TEST: Insulation resistance with megger
+4. INSPECT: All motor connections for damage
+5. DRY: Motor if moisture ingress suspected
+6. REPLACE: Damaged cables or components
+
+Escalation: Critical - Qualified Electrician Required
+
+ERROR E001: NON-VOLATILE MEMORY ENDURANCE EXCEEDED
+Problem Cause:
+- EEPROM/Flash memory write cycles exceeded design limit
+- Frequent parameter changes causing excessive write operations
+- Program or data corruption due to memory wear
+- Controller configuration changes too frequent
+
+Symptoms:
+- Parameter settings not retained after power cycle
+- Intermittent program execution errors
+- Data logging inconsistencies
+- Warning messages on HMI display
+
+Corrective Actions:
+1. IMMEDIATE: Backup all critical parameters and programs
+2. ANALYZE: Review parameter change frequency and necessity
+3. OPTIMIZE: Reduce unnecessary write operations to memory
+4. SCHEDULE: Plan for memory module replacement
+5. IMPLEMENT: Revised parameter management procedures
+6. MONITOR: Track memory usage statistics
+
+Escalation: Medium - Controls Engineer Required
+
+ERROR E009: BUS UNDERVOLTAGE
+Problem Cause:
+- DC bus voltage below minimum operating threshold (<350V typical)
+- Power supply malfunction or brownout condition
+- Excessive load drawing current from DC bus
+- Defective bus capacitors or charging circuit
+
+Symptoms:
+- Drive faults during acceleration or high load
+- Inconsistent motor performance
+- Voltage readings below specification
+- Random resets during operation
+
+Corrective Actions:
+1. IMMEDIATE: Check incoming AC line voltage and quality
+2. MEASURE: DC bus voltage with oscilloscope during operation
+3. INSPECT: Power supply connections and components
+4. TEST: Load current and power factor measurements
+5. REPLACE: Defective power supply components as needed
+6. VERIFY: Stable DC bus voltage under all load conditions
+
+Escalation: High - Senior Electrician Required
+
+ERROR E010: BUS OVERVOLTAGE
+Problem Cause:
+- DC bus voltage exceeded maximum safe limit (>800V typical)
+- Regenerative braking energy not properly dissipated
+- Defective braking resistor or chopper circuit
+- Power supply regulation failure
+
+Symptoms:
+- Drive trips during deceleration
+- High voltage readings on DC bus
+- Braking resistor overheating
+- Erratic motor behavior during stopping
+
+Corrective Actions:
+1. IMMEDIATE: Verify braking resistor operation and connections
+2. CHECK: Braking chopper circuit functionality
+3. MEASURE: Regenerative energy during deceleration cycles
+4. ADJUST: Deceleration rates to reduce regenerative energy
+5. REPLACE: Defective braking components
+6. TEST: System performance under normal operating cycles
+
+Escalation: High - Senior Electrician Required
+
+ERROR E012: HOME SEARCH FAILED
+Problem Cause:
+- Home position switch not detected during homing sequence
+- Damaged or misaligned home position sensor
+- Mechanical obstruction preventing axis movement
+- Encoder or feedback device malfunction
+
+Symptoms:
+- Axis will not complete homing sequence
+- Movement stops before reaching home position
+- Home position repeatability issues
+- Position reference lost after power cycle
+
+Corrective Actions:
+1. IMMEDIATE: Manually verify axis can move to home position
+2. INSPECT: Home position switch and mounting hardware
+3. CHECK: Switch wiring and signal continuity
+4. CLEAN: Remove debris from sensor detection area
+5. CALIBRATE: Adjust home position switch location if needed
+6. TEST: Complete homing sequence multiple times
+
+Escalation: High - Maintenance Technician Required
+
+ERROR E014: COMMUNICATIONS NETWORK PROBLEM
+Problem Cause:
+- Network cable disconnected or damaged
+- IP address conflicts or incorrect network configuration
+- Network switch or router malfunction
+- EMI interference affecting data transmission
+
+Symptoms:
+- Loss of communication with HMI or SCADA system
+- Intermittent network connectivity
+- Data logging failures
+- Remote monitoring not functional
+
+Corrective Actions:
+1. IMMEDIATE: Check all network cable connections
+2. VERIFY: IP address configuration and conflicts
+3. TEST: Network connectivity with ping tests
+4. INSPECT: Network cables for damage or EMI sources
+5. REPLACE: Defective network components
+6. CONFIGURE: Network settings and verify communication
+
+Escalation: High - IT/Controls Technician Required
+
+ERROR E018: OVERSPEED FAULT
+Problem Cause:
+- Motor speed exceeded maximum safe operating limit
+- Speed feedback signal malfunction
+- Control system malfunction causing runaway condition
+- Mechanical coupling failure allowing overspeed
+
+Symptoms:
+- Motor running faster than commanded speed
+- Excessive vibration and noise
+- Speed display showing values above setpoint
+- Mechanical stress on driven equipment
+
+Corrective Actions:
+1. IMMEDIATE: Stop machine operation immediately - SAFETY CRITICAL
+2. SAFETY: Implement lockout/tagout procedures
+3. INSPECT: Speed feedback devices and wiring
+4. CHECK: Control system speed reference signals
+5. VERIFY: Mechanical coupling integrity
+6. TEST: Speed control loop functionality before restart
+
+Escalation: Critical - Operations Supervisor Required
+
+ERROR E019: EXCESS POSITION ERROR
+Problem Cause:
+- Actual position deviates significantly from commanded position
+- Mechanical binding or excessive friction
+- Servo tuning parameters incorrect
+- Position feedback device malfunction
+
+Symptoms:
+- Poor positioning accuracy
+- Axis oscillation or hunting
+- Mechanical stress on components
+- Product quality issues
+
+Corrective Actions:
+1. IMMEDIATE: Reduce feed rate and inspect mechanical system
+2. CHECK: Position feedback signal quality and calibration
+3. INSPECT: Mechanical system for binding or obstructions
+4. ADJUST: Servo tuning parameters (gains, filters)
+5. LUBRICATE: Mechanical components per maintenance schedule
+6. VERIFY: Position accuracy within specification
+
+Escalation: High - Controls Technician Required
+
+ERROR E022: MOTOR THERMAL PROTECTION FAULT
+Problem Cause:
+- Motor winding temperature exceeded thermal protection limit
+- Thermal protection device (PTC/RTD) activated
+- Inadequate motor cooling or blocked ventilation
+- Motor overloading beyond rated capacity
+
+Symptoms:
+- Motor shutdown due to thermal protection
+- Reduced motor performance before shutdown
+- Hot motor housing temperature
+- Thermal protection device resistance change
+
+Corrective Actions:
+1. IMMEDIATE: Stop operation and allow motor to cool completely
+2. SAFETY: Verify motor temperature safe before inspection
+3. CHECK: Motor cooling system and ventilation clearances
+4. MEASURE: Motor current and compare to nameplate rating
+5. INSPECT: Thermal protection device wiring and calibration
+6. RESUME: Operation only after temperature normalizes
+
+Escalation: Critical - Senior Electrician Required
+
+ERROR E023: IPM THERMAL PROTECTION FAULT
+Problem Cause:
+- Intelligent Power Module temperature exceeded safe limit
+- Inadequate heat sink cooling or blocked air flow
+- Excessive current causing power dissipation
+- Ambient temperature too high for proper cooling
+
+Symptoms:
+- Drive shutdown with thermal fault indication
+- Reduced drive performance before fault
+- Hot heat sink temperature
+- Cooling fans not operating properly
+
+Corrective Actions:
+1. IMMEDIATE: Stop operation and allow IPM to cool down
+2. SAFETY: Verify safe temperature before inspection
+3. CHECK: Cooling fan operation and air flow direction
+4. CLEAN: Heat sink fins and remove dust accumulation
+5. VERIFY: Ambient temperature within specifications
+6. MONITOR: IPM temperature during normal operation
+
+Escalation: Critical - Senior Electrician Required
+
+ERROR E024: EXCESS VELOCITY ERROR
+Problem Cause:
+- Actual velocity significantly different from commanded velocity
+- Velocity feedback signal problems
+- Mechanical loading changes or binding
+- Velocity loop tuning parameters incorrect
+
+Symptoms:
+- Inconsistent motion profiles
+- Velocity overshoot or undershoot
+- System instability or oscillation
+- Poor motion quality
+
+Corrective Actions:
+1. IMMEDIATE: Reduce commanded velocities and accelerations
+2. CHECK: Velocity feedback signal integrity
+3. INSPECT: Mechanical system for loading changes
+4. ADJUST: Velocity loop tuning parameters
+5. VERIFY: Mechanical coupling and alignment
+6. TEST: Motion profiles at reduced speeds
+
+Escalation: High - Controls Technician Required
+
+ERROR E027: AXIS NOT HOMED
+Problem Cause:
+- Homing sequence not completed after power-up
+- Home position lost due to position reference failure
+- Manual mode operation moved axis from home
+- Encoder battery backup failure
+
+Symptoms:
+- Position reference uncertainty
+- Automatic operation not permitted
+- Home position indicator not active
+- Positioning accuracy compromised
+
+Corrective Actions:
+1. IMMEDIATE: Initiate proper homing sequence
+2. VERIFY: Home position switch operation
+3. CHECK: Position reference system integrity
+4. INSPECT: Encoder battery backup if applicable
+5. COMPLETE: Full homing cycle per procedure
+6. VALIDATE: Home position repeatability
+
+Escalation: Medium - Maintenance Technician Required
+
+ERROR E030: ENCODER COMMUNICATION FAULT
+Problem Cause:
+- Communication lost with absolute encoder
+- Encoder cable damaged or disconnected
+- Encoder power supply failure
+- EMI interference with encoder signals
+
+Symptoms:
+- Position feedback lost or erratic
+- Position display showing fault or zero
+- Encoder diagnostic LEDs indicating fault
+- Motion control instability
+
+Corrective Actions:
+1. IMMEDIATE: Stop motion and switch to safe mode
+2. CHECK: Encoder cable connection and routing
+3. VERIFY: Encoder power supply voltage
+4. INSPECT: Cable for damage or EMI sources
+5. TEST: Encoder communication diagnostics
+6. REPLACE: Defective encoder or cable as needed
+
+Escalation: High - Controls Technician Required
+
+ERROR E036: POWER CIRCUITRY OVERTEMPERATURE
+Problem Cause:
+- Power semiconductors exceeded thermal limits
+- Inadequate cooling of power electronics
+- Excessive ambient temperature
+- Power device aging or degradation
+
+Symptoms:
+- Drive thermal shutdown
+- Reduced power output before shutdown
+- Hot power electronics enclosure
+- Thermal protection activation
+
+Corrective Actions:
+1. IMMEDIATE: Stop operation and allow cooling
+2. SAFETY: Verify safe temperature before inspection
+3. CHECK: Cooling system operation and air flow
+4. CLEAN: Dust and debris from cooling passages
+5. VERIFY: Ambient temperature within limits
+6. INSPECT: Power device mounting and thermal interface
+
+Escalation: Critical - Senior Electrician Required
+
+ERROR E037: AC LINE LOSS
+Problem Cause:
+- Loss of incoming AC power supply
+- Power distribution circuit breaker tripped
+- Utility power outage or brownout
+- Wiring connection failure
+
+Symptoms:
+- Complete loss of power to equipment
+- Backup systems may activate
+- UPS alarms if equipped
+- Multiple systems affected simultaneously
+
+Corrective Actions:
+1. IMMEDIATE: Check facility power distribution
+2. VERIFY: Circuit breaker positions and condition
+3. MEASURE: Incoming voltage at distribution panel
+4. INSPECT: Power connection terminals for looseness
+5. CONTACT: Utility company if widespread outage
+6. RESTORE: Power systematically after cause corrected
+
+Escalation: Critical - Facility Electrician Required
+
+ERROR E043: DRIVE ENABLE INPUT
+Problem Cause:
+- Drive enable signal not active
+- Safety interlock circuit open
+- External enable switch in OFF position
+- Control wiring fault in enable circuit
+
+Symptoms:
+- Drive will not enable or start
+- Enable status indicator off
+- Motor will not respond to commands
+- Safety system may be activated
+
+Corrective Actions:
+1. IMMEDIATE: Check all safety interlock devices
+2. VERIFY: Enable switch positions and operation
+3. INSPECT: Enable circuit wiring and connections
+4. TEST: Enable signal at drive input terminals
+5. CLEAR: Any active safety interlocks
+6. ENABLE: Drive only after all safety checks complete
+
+Escalation: Medium - Maintenance Technician Required
+
+ERROR E048: OVERCURRENT TRIP
+Problem Cause:
+- Motor current exceeded drive protection limit
+- Short circuit in motor or cable
+- Mechanical overload or binding
+- Drive current limit set too low
+
+Symptoms:
+- Instantaneous drive shutdown
+- Motor stops abruptly
+- High current reading before trip
+- Possible motor winding damage
+
+Corrective Actions:
+1. IMMEDIATE: Stop operation and isolate power
+2. SAFETY: Implement lockout/tagout procedures
+3. MEASURE: Motor winding resistance with megger
+4. INSPECT: Motor connections for short circuits
+5. CHECK: Mechanical system for binding or overload
+6. VERIFY: Drive current limit settings
+
+Escalation: High - Senior Electrician Required
+
+ERROR E052: COMMUNICATION TIMEOUT
+Problem Cause:
+- Communication link timeout with external device
+- Network congestion or latency issues
+- Faulty communication interface
+- Incorrect communication parameters
+
+Symptoms:
+- Loss of data exchange with external systems
+- Communication status indicators showing fault
+- System operating in standalone mode
+- Data logging or reporting interrupted
+
+Corrective Actions:
+1. IMMEDIATE: Check communication cable connections
+2. VERIFY: Communication parameter settings
+3. TEST: Communication interface functionality
+4. MONITOR: Network traffic and response times
+5. RESET: Communication interface if necessary
+6. CONFIGURE: Timeout parameters if appropriate
+
+Escalation: Medium - Controls Technician Required
+
+CRITICAL ERROR EMERGENCY RESPONSE
+For Errors E004, E005, E018, E022, E023, E034, E036, E037:
+1. STOP - Immediately halt all machine operation
+2. ISOLATE - Disconnect power using proper LOTO procedures
+3. EVACUATE - Clear personnel from immediate area if necessary
+4. NOTIFY - Contact supervision and maintenance immediately
+5. DOCUMENT - Record all observations and actions taken
+
+ERROR E045: SENSOR FAILURE
+Problem Cause:
+- Sensor output out of range or zero
+- Broken or disconnected wiring
+- Sensor contamination
+- Calibration drift
+
+Corrective Actions:
+1. IMMEDIATE: Put affected axis into safe state
+2. INSPECT: Check sensor wiring and connectors
+3. CLEAN: Remove debris or contamination from sensor face
+4. CALIBRATE: Recalibrate sensor per Section 3.2
+5. REPLACE: Faulty sensor if readings remain unstable
+6. VERIFY: Restore operation and monitor readings
+
+Escalation: Medium - Maintenance Technician Required
+
+ERROR E050: MEMORY PARITY ERROR
+Problem Cause:
+- Corrupted memory in control system
+- Power fluctuation during write cycle
+- Faulty memory module
+
+Symptoms:
+- Unexpected controller reset
+- Program checksum failure
+- Alarm on HMI
+
+Corrective Actions:
+1. IMMEDIATE: Stop machine operation safely
+2. REBOOT: Cycle control power to attempt memory recovery
+3. VERIFY: Run full memory diagnostics
+4. REPLACE: Memory module if errors persist
+5. RESTORE: Download verified backup program
+6. TEST: Perform system functional test
+
+Escalation: Critical - Controls Engineer Required
+
+================================================================
+7. PREVENTIVE MAINTENANCE
+================================================================
+
+7.1 DAILY MAINTENANCE
+---------------------
+OPERATOR DAILY CHECKS:
+□ Visual inspection of all equipment
+□ Check for unusual noises or vibrations
+□ Verify safety systems operational
+□ Monitor temperature indicators
+□ Check fluid levels
+□ Inspect for leaks (air, oil, water)
+□ Clean work areas
+□ Record meter readings
+
+CLEANING PROCEDURES:
+- Wipe down all surfaces with approved cleaner
+- Remove product buildup from conveyors
+- Clean vision system lenses
+- Empty trash and recycling containers
+- Sanitize operator touch points
+
+7.2 WEEKLY MAINTENANCE
+----------------------
+MECHANICAL SYSTEMS:
+□ Lubricate per lubrication schedule
+□ Check belt tension and condition
+□ Inspect chains for wear and proper lubrication
+□ Verify coupling alignment
+□ Check bearing temperatures
+□ Inspect guards and safety devices
+
+ELECTRICAL SYSTEMS:
+□ Check electrical connections for tightness
+□ Test emergency stop functions
+□ Verify pilot light operation
+□ Clean electrical enclosures
+□ Check battery backup systems
+□ Test ground fault protection
+
+PNEUMATIC SYSTEMS:
+□ Drain air receiver tanks
+□ Check air filter elements
+□ Verify regulator settings
+□ Test safety relief valves
+□ Inspect air lines for damage
+□ Check actuator operation
+
+7.3 MONTHLY MAINTENANCE
+-----------------------
+DETAILED INSPECTIONS:
+□ Calibrate weighing systems
+□ Check sensor accuracy
+□ Test alarm functions
+□ Verify interlocks operational
+□ Inspect wear parts
+□ Update preventive maintenance records
+
+LUBRICATION:
+- Follow manufacturer's lubrication schedule
+- Use only specified lubricants
+- Check grease fitting accessibility
+- Monitor lubricant consumption
+- Inspect for over-lubrication
+
+7.4 QUARTERLY MAINTENANCE
+-------------------------
+COMPREHENSIVE TESTING:
+□ Thermal imaging inspection
+□ Vibration analysis
+□ Motor current signature analysis
+□ Insulation resistance testing
+□ Network performance testing
+□ Backup system verification
+
+MAJOR ADJUSTMENTS:
+- Conveyor alignment checks
+- Precision equipment calibration
+- Control system parameter verification
+- Safety system proof testing
+- Documentation updates
+
+================================================================
+8. EMERGENCY PROCEDURES
+================================================================
+
+8.1 FIRE EMERGENCY
+------------------
+IMMEDIATE ACTIONS:
+1. Activate fire alarm
+2. Evacuate personnel from immediate area
+3. Call fire department (911)
+4. Use appropriate fire extinguisher if safe
+5. Shut down utilities if possible
+6. Meet at designated assembly area
+
+FIRE EXTINGUISHER SELECTION:
+Class A (Paper/Wood): Water or foam
+Class B (Flammable liquids): Foam or CO2
+Class C (Electrical): CO2 or dry chemical
+Class D (Metals): Special dry powder
+
+8.2 ELECTRICAL EMERGENCY
+------------------------
+ELECTRICAL SHOCK:
+1. Do not touch victim directly
+2. Disconnect power source if possible
+3. Use insulated tool to move victim
+4. Call for medical assistance
+5. Begin CPR if qualified
+6. Report incident immediately
+
+ELECTRICAL FIRE:
+1. De-energize equipment if safely possible
+2. Use Class C fire extinguisher
+3. Never use water on electrical fires
+4. Evacuate area if fire spreads
+5. Call fire department
+
+8.3 CHEMICAL SPILL
+------------------
+SPILL RESPONSE:
+1. Assess spill size and hazards
+2. Evacuate unnecessary personnel
+3. Contain spill if safely possible
+4. Use appropriate spill cleanup materials
+5. Ventilate area
+6. Report to environmental coordinator
+
+PERSONAL EXPOSURE:
+1. Remove contaminated clothing
+2. Flush affected area with water 15 minutes minimum
+3. Seek medical attention if required
+4. Report exposure incident
+5. Complete incident documentation
+
+8.4 MECHANICAL INJURY
+---------------------
+FIRST AID RESPONSE:
+1. Ensure scene safety
+2. Call for medical assistance if serious
+3. Control bleeding with direct pressure
+4. Do not move victim with suspected spinal injury
+5. Comfort and reassure victim
+6. Document incident thoroughly
+
+================================================================
+9. TECHNICAL SPECIFICATIONS
+================================================================
+
+9.1 ELECTRICAL SPECIFICATIONS
+-----------------------------
+POWER REQUIREMENTS:
+Main Power: 480V AC, 3-phase, 60Hz
+Control Power: 120V AC, single phase
+Total Connected Load: 50-150 HP (varies by configuration)
+Power Factor: 0.85 minimum
+Voltage Tolerance: ±10%
+Frequency Tolerance: ±2%
+
+CONTROL SYSTEM:
+Processor: Industrial PLC
+Memory: 512K program, 1M data
+I/O Capacity: 512 digital, 128 analog
+Communication: Ethernet, RS-485
+Programming: IEC 61131-3 compliant
+
+9.2 MECHANICAL SPECIFICATIONS
+-----------------------------
+OPERATING SPEEDS:
+Minimum Speed: 50 containers/minute
+Maximum Speed: 600 containers/minute
+Speed Accuracy: ±1% of setpoint
+Positioning Accuracy: ±0.001 inches
+
+ENVIRONMENTAL CONDITIONS:
+Operating Temperature: 50°F to 104°F (10°C to 40°C)
+Storage Temperature: -4°F to 140°F (-20°C to 60°C)
+Humidity: 10% to 95% RH, non-condensing
+Altitude: Up to 6600 feet (2000m)
+
+9.3 FLUID SPECIFICATIONS
+------------------------
+COMPRESSED AIR:
+Supply Pressure: 100 PSI minimum
+Quality: ISO 8573-1 Class 1.4.1
+Dew Point: -40°F (-40°C)
+Consumption: 15-25 SCFM (varies by application)
+
+FACILITY WATER:
+Supply Pressure: 40-80 PSI
+Quality: Potable water standard
+Temperature: 50-80°F (10-27°C)
+Flow Rate: 5-15 GPM (varies by application)
+
+================================================================
+10. QUALITY CONTROL PROCEDURES
+================================================================
+
+10.1 INCOMING INSPECTION
+------------------------
+CONTAINER INSPECTION:
+□ Visual defects (cracks, chips, contamination)
+□ Dimensional verification
+□ Wall thickness uniformity
+□ Thread integrity
+□ Lot identification
+□ Certificate of compliance
+
+MATERIAL VERIFICATION:
+□ Raw material certificates
+□ Expiration date verification
+□ Storage condition compliance
+□ Batch identification
+□ Quarantine procedures
+□ Release documentation
+
+10.2 IN-PROCESS QUALITY CONTROL
+-------------------------------
+CONTINUOUS MONITORING:
+□ Fill weight accuracy (±1% specification)
+□ Fill level consistency
+□ Cap torque verification
+□ Label placement accuracy
+□ Print quality verification
+□ Seal integrity testing
+
+SAMPLING PROCEDURES:
+Sample Frequency: Every 15 minutes
+Sample Size: 5 units minimum
+Control Limits: ±3 standard deviations
+Recording: Electronic data collection
+Trending: Statistical process control charts
+
+10.3 FINAL PRODUCT INSPECTION
+-----------------------------
+FINAL INSPECTION CHECKLIST:
+□ Overall appearance
+□ Label alignment and adhesion
+□ Cap application quality
+□ Print legibility and accuracy
+□ Package integrity
+□ Weight verification
+□ Metal detection verification
+
+RELEASE CRITERIA:
+All specifications met: Release for shipment
+Minor deviations: Evaluate for use authorization
+Major deviations: Reject and investigate
+Documentation: Complete inspection records
+
+10.4 REJECTION HANDLING
+-----------------------
+PRODUCT REJECTION:
+1. Immediate segregation of rejected product
+2. Investigation of root cause
+3. Corrective action implementation
+4. Verification of correction
+5. Disposition of rejected material
+6. Documentation of incident
+
+TRACEABILITY:
+- Maintain lot identification throughout process
+- Record all process parameters
+- Link finished goods to raw materials
+- Enable rapid product recall if required
+- Archive records per company policy
+
+================================================================
+11. TRAINING REQUIREMENTS
+================================================================
+
+11.1 OPERATOR TRAINING
+----------------------
+MANDATORY COURSES:
+- Basic Equipment Operation
+- Safety and Emergency Procedures
+- Quality Control Fundamentals
+- Daily Maintenance Tasks
+
+Frequency: Initial hire + annual refresher
+
+ASSESSMENT:
+- Written test (≥80% pass)
+- Practical demonstration of skills
+
+11.2 MAINTENANCE STAFF TRAINING
+-------------------------------
+MANDATORY COURSES:
+- Advanced Mechanical Systems
+- Electrical Safety and Troubleshooting
+- PLC Programming Basics
+- Lockout/Tagout (LOTO) Certification
+
+Frequency: Initial assignment + biennial refresher
+
+11.3 ANNUAL RECERTIFICATION
+---------------------------
+- All personnel must maintain certifications
+- Training records stored in Learning Management System
+- Non-compliance leads to suspended equipment access
+
+================================================================
+12. SPARE PARTS INVENTORY
+================================================================
+
+12.1 CRITICAL SPARE PARTS LIST
+------------------------------
+Component | Part Number | Min Qty | Lead Time
+Motor Coupling | MC-2500-SS | 2 | 4 weeks
+IPM Module | IPM-400A | 1 | 6 weeks
+Safety Relay | SR-24VDC-4NO | 4 | 1 week
+Encoder | ENC-1024-PPR | 2 | 5 weeks
+Pressure Transducer | PT-4-20MA-100PSI | 3 | 3 weeks
+
+12.2 MIN / MAX STOCK LEVELS
+---------------------------
+- Minimum Level: Trigger automatic reorder
+- Maximum Level: 3x average monthly usage
+- Review levels quarterly
+
+12.3 REORDER PROCEDURE
+----------------------
+1. Generate stock report from CMMS
+2. Identify items below minimum level
+3. Create purchase requisition
+4. Obtain approval from Maintenance Supervisor
+5. Submit to Procurement
+6. Update expected delivery date in CMMS
+
+================================================================
+13. ENVIRONMENTAL COMPLIANCE
+================================================================
+
+13.1 WASTE MANAGEMENT
+---------------------
+- Segregate hazardous and non-hazardous waste
+- Dispose of chemicals per local regulations
+- Maintain spill logs and disposal manifests
+
+13.2 ENERGY EFFICIENCY
+----------------------
+- Shut down idle equipment >15 minutes
+- Maintain compressed-air leaks below 5%
+- Review energy consumption monthly
+
+13.3 EMISSION CONTROL
+---------------------
+- Monitor VOC emissions from solvents
+- Inspect filtration systems quarterly
+- Record emissions data for regulatory reporting
+
+13.4 WATER USAGE MONITORING
+---------------------------
+- Install flow meters on all main water supply lines
+- Track and log water consumption per production shift
+- Compare usage against baseline consumption metrics
+- Investigate and correct variances greater than 10%
+- Install low-flow nozzles and automatic shut-off valves where feasible
+- Report monthly water-usage statistics to the Environmental Coordinator
+
+13.5 RECYCLED MATERIALS POLICY
+------------------------------
+- Source packaging materials containing at least 50% recycled content
+- Maintain supplier certificates of recycled composition
+- Segregate recyclable waste streams (plastics, cardboard, metals)
+- Measure and document waste diversion rate; target ≥85%
+- Provide annual recycling-practice training to all employees
+- Conduct yearly audits to verify compliance and identify improvements
+- Retain recycling records for a minimum of 5 years
+
+================================================================
+APPENDIX A: PART NUMBERS AND SPECIFICATIONS
+================================================================
+
+COMMON REPLACEMENT PARTS:
+Motor Coupling: P/N MC-2500-SS
+Drive Belt: P/N DB-150-HTD
+Air Filter Element: P/N AF-125-HEPA
+Temperature Sensor: P/N TS-RTD-100
+Pressure Transducer: P/N PT-4-20MA-100PSI
+Safety Relay: P/N SR-24VDC-4NO
+Emergency Stop Button: P/N ES-RED-TWIST
+
+LUBRICATION SCHEDULE:
+Bearing Grease: Mobilith SHC 220, 6-month intervals
+Chain Oil: ISO VG 220, weekly application
+Hydraulic Fluid: ISO VG 46, annual change
+Air Line Oil: ISO VG 32, automatic lubrication
+
+================================================================
+APPENDIX B: CONTACT INFORMATION
+================================================================
+
+EMERGENCY CONTACTS:
+Plant Emergency: Extension 911 or 911
+Maintenance Supervisor: Extension 2500
+Quality Manager: Extension 2600
+Environmental Coordinator: Extension 2700
+Facility Manager: Extension 2800
+
+VENDOR SUPPORT:
+Equipment Manufacturer: 1-800-XXX-XXXX
+Control System Support: 1-800-YYY-YYYY
+Preventive Maintenance: Extension 2550
+
+================================================================
+END OF MANUAL
+================================================================
+
+This manual provides comprehensive technical information for 
+troubleshooting, operation, and maintenance purposes. Always 
+consult qualified technicians for complex repairs and follow 
+all safety procedures. Keep this manual current and accessible 
+to all authorized personnel.
+
+Document Control: Revision tracking and updates managed by 
+Engineering Department. Report errors or suggestions for 
+improvement to Technical Documentation Manager. 
