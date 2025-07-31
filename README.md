@@ -122,11 +122,10 @@ erDiagram
     SOLUTIONS {
         string solution_id PK
         string error_code
-        string machine_type
-        string description
-        number success_rate
-        array steps
-        number estimated_time_minutes
+        string solution_comment
+        string created_at
+        string updated_at
+        array embeddings
     }
     
     PLANTS ||--o{ PRODUCTION_LINES : contains
