@@ -381,19 +381,6 @@ Key configuration files:
 | `MACHINE_ID` | Machine identifier | `MACHINE_001` |
 | `PRODUCTION_LINE` | Production line name | `BEVERAGE_LINE_A` |
 
-### Machine Types & Products
-
-**Supported Machine Types:**
-
-- `beverage_filling_line` - Carbonated beverage filling
-- `packaging_line` - Product packaging and labeling
-- `quality_control_station` - Quality inspection
-
-**Product Codes:**
-
-- `CB_COLA_355` - Cola 355ml
-- `CB_LEMON_500` - Lemon soda 500ml
-- `CB_ORANGE_355` - Orange soda 355ml
 
 ## 📊 Monitoring & Observability
 
@@ -441,7 +428,7 @@ curl http://localhost:59840/cpg_manufacturing/manufacturing.telemetry/_all_docs?
 
 ```bash
 # App Services Admin Interface
-curl https://your-cluster.apps.cloud.couchbase.com:4985/
+curl -u admin:password https://your-cluster.apps.cloud.couchbase.com:4985/
 
 # Check sync gateway status
 curl https://your-cluster.apps.cloud.couchbase.com:4985/_db/cpg_manufacturing
@@ -585,19 +572,7 @@ cat edge-server-config.json | jq '.replications'
 curl -u username:password https://your-cluster.apps.cloud.couchbase.com:4984/cpg_manufacturing
 ```
 
-### Performance Tuning
-
-**Memory Settings:**
-
-```bash
-# Increase Java heap size
-export JAVA_OPTS="-Xmx1g -Xms512m"
-
-# Edge Server memory limit
-# Edit docker-compose.yml: GOMEMLIMIT=1GiB
-```
-
-**Data Retention:**
+## Data Retention:**
 
 ```bash
 # Adjust retention in IoTDeviceConfig.java
@@ -605,26 +580,7 @@ TELEMETRY_EXPIRATION_DAYS = 30
 ALERT_EXPIRATION_DAYS = 90
 ```
 
-## 🤝 Contributing
 
-1. **Development Setup:**
-
-   ```bash
-   git clone <repository-url>
-   ./setup.sh
-   ```
-
-2. **Code Style:**
-   - Java: Follow Oracle Java conventions
-   - Python: PEP 8 compliance
-   - Documentation: Update README for new features
-
-3. **Testing:**
-
-   ```bash
-   mvn test
-   python -m pytest setup/tests/
-   ```
 
 ## 📝 License
 
@@ -638,5 +594,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Couchbase Mobile Sync](https://docs.couchbase.com/sync-gateway/current/)
 - [LangChain4j Documentation](https://docs.langchain4j.dev/)
 - [Google Gemini AI API](https://ai.google.dev/docs)
-- [CPG Manufacturing Standards](https://www.couchbase.com/solutions/manufacturing/)
 - [Couchbase Cloud Console](https://cloud.couchbase.com/)
