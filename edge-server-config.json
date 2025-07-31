@@ -11,7 +11,7 @@
       "enable_adhoc_queries": true,
       "queries": {
         "telemetry_by_machine": "SELECT * FROM _ WHERE machine_id = $MACHINE_ID ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
-        "active_alerts": "SELECT * FROM _ WHERE status = 'active' ORDER BY severity DESC, timestamp DESC LIMIT 20",
+        "active_alerts": "SELECT * FROM _ WHERE status = 'active' AND machine_id = $MACHINE_ID ORDER BY severity DESC, timestamp DESC LIMIT 20",
         "alerts_by_error_code": "SELECT * FROM _ WHERE error_code = $ERROR_CODE ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
         "device_status": "SELECT * FROM _ WHERE device_id = $DEVICE_ID ORDER BY timestamp DESC LIMIT 1",
         "production_metrics_by_line": "SELECT * FROM _ WHERE production_line = $PRODUCTION_LINE ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",

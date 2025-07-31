@@ -361,13 +361,13 @@ public class VectorSearchUtil {
     
     private String buildVectorSearchSQL(Collection collection, String embeddingExpression, int limit) {
         return String.format(
-            "SELECT meta().id, content, title, machine_type, type " +
+            "SELECT meta().id, content,  APPROX_VECTOR_DISTANCE(%s, $vectorParam) as distance " +
             "FROM %s.%s " +
-            "ORDER BY APPROX_VECTOR_DISTANCE(%s, $vectorParam) " +
+            "ORDER BY distance " +
             "LIMIT %d",
+            embeddingExpression,
             collection.getScope().getName(),
             collection.getName(),
-            embeddingExpression,
             limit
         );
     }
@@ -390,11 +390,10 @@ public class VectorSearchUtil {
                 Map<String, Object> documentMap = createDocumentMap(result);
                 
                 // Calculate similarity from distance (smaller distance = higher similarity)
-                double distance = 0.0; // APPROX_VECTOR_DISTANCE result will be in order
-                double similarity = Math.max(0.0, 1.0 - distance);
+                double distance = (double) documentMap.get("distance"); // APPROX_VECTOR_DISTANCE result will be in order
                 
-                if (similarity >= threshold) {
-                    VectorSearchResult searchResult = new VectorSearchResult(documentMap, similarity, distance);
+                if (distance >= threshold) {
+                    VectorSearchResult searchResult = new VectorSearchResult(documentMap, distance);
                     results.add(searchResult);
                 }
             }
@@ -403,19 +402,15 @@ public class VectorSearchUtil {
             return new ArrayList<>();
         }
         
-        // Sort by similarity (highest first)
-        results.sort((a, b) -> Double.compare(b.getSimilarity(), a.getSimilarity()));
-        
         return results;
     }
     
     private Map<String, Object> createDocumentMap(Result result) {
         Map<String, Object> documentMap = new HashMap<>();
         documentMap.put("id", result.getString("id"));
-        documentMap.put("title", result.getString("title"));
         documentMap.put("content", result.getString("content"));
         documentMap.put("machine_type", result.getString("machine_type"));
-        documentMap.put("type", result.getString("type"));
+        documentMap.put("distance", result.getDouble("distance"));
         return documentMap;
     }
     
@@ -452,23 +447,20 @@ public class VectorSearchUtil {
      */
     public static class VectorSearchResult {
         private final Map<String, Object> document;
-        private final double similarity;
         private final double distance;
         
-        public VectorSearchResult(Map<String, Object> document, double similarity, double distance) {
+        public VectorSearchResult(Map<String, Object> document, double distance) {
             this.document = document;
-            this.similarity = similarity;
             this.distance = distance;
         }
         
         public Map<String, Object> getDocument() { return document; }
-        public double getSimilarity() { return similarity; }
         public double getDistance() { return distance; }
         
         @Override
         public String toString() {
-            return String.format("VectorSearchResult{similarity=%.3f, title='%s'}", 
-                               similarity, document.get("title"));
+            return String.format("content='%s', distance=%.4f", 
+                document.get("content"), distance);
         }
     }
     

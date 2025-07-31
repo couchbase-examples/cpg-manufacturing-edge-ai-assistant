@@ -22,12 +22,12 @@ import static com.couchbase.example.cli_agent.ToolTraceLogger.*;
 public class ManualSearchTools {
     
     // Constants
-    private static final String CAPELLA_ENDPOINT =  System.getenv().getOrDefault("APP_SERVICES_CLUSTER", "");
+    private static final String CAPELLA_ENDPOINT =  System.getenv().getOrDefault("CAPELLA_APP_SERVICES_ENDPOINT", "");
     private static final String CAPELLA_USERNAME = System.getenv().getOrDefault("APP_SERVICES_USERNAME", "");
     private static final String CAPELLA_PASSWORD = System.getenv().getOrDefault("APP_SERVICES_PASSWORD", "");
 
     private static final int DEFAULT_SEARCH_LIMIT = 5;
-    private static final double DEFAULT_SIMILARITY_THRESHOLD = 0.6;
+    private static final double DEFAULT_SIMILARITY_THRESHOLD = 0.1;
     
     // UI Constants
     private static final String SEPARATOR_LINE = "=".repeat(50);
@@ -178,8 +178,8 @@ public class ManualSearchTools {
     private String formatSearchResults(String query, List<VectorSearchUtil.VectorSearchResult> results, 
                                      long totalManuals, String machineType) {
         StringBuilder response = new StringBuilder();
-        response.append(String.format("%s Manual Search Results for '%s' (searched %d local manuals):\n", 
-                                     BOOK_ICON, query, totalManuals));
+        response.append(String.format("%s Manual Search Results for '%s' %d (searched %d local manuals):\n", 
+                                     BOOK_ICON, query, results.size() ,totalManuals));
         response.append(SEPARATOR_LINE).append("\n");
         
         if (results.isEmpty()) {
@@ -210,16 +210,11 @@ public class ManualSearchTools {
     private String formatSingleResult(int index, Map<String, Object> manual, 
                                     VectorSearchUtil.VectorSearchResult result) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%d. 📖 %s\n", index, manual.get("title")));
         sb.append(String.format("   🏭 Machine Type: %s\n", manual.get("machine_type")));
-        sb.append(String.format("   📝 Version: %s\n", manual.get("manual_version")));
-        sb.append(String.format("   🎯 Relevance: %.1f%%\n", result.getSimilarity() * 100));
+        sb.append(String.format("   🎯 distance: %.7f%%\n", result.getDistance()));
         
         String content = (String) manual.get("content");
-        if (content != null) {
-            String preview = content.length() > 200 ? content.substring(0, 200) + "..." : content;
-            sb.append(String.format("   📄 Content: %s\n", preview));
-        }
+        sb.append(String.format("   📄 Content: %s\n", content));
         sb.append("\n");
         return sb.toString();
     }

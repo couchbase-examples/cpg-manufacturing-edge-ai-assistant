@@ -145,6 +145,27 @@ public class EdgeServerTools {
             return new ArrayList<>();
         }
     }
+
+    @Tool("Get all active alerts and quality alarms for a specific CPG machine")
+    public List<Map<String, Object>> getActiveAlertsForMachine(String machineId) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getActiveAlertsForMachine", "machineId", machineId);
+        try {
+            Map<String, Object> params = new HashMap<>();
+            params.put("MACHINE_ID", machineId);
+            List<Map<String, Object>> results = executeNamedQuery("active_alerts", params);
+            if (results.isEmpty()) {
+                results = new ArrayList<>();
+            }
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getActiveAlertsForMachine", results, duration);
+            return results;
+        } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getActiveAlertsForMachine", e, duration);
+            return new ArrayList<>();
+        }
+    }
     
     @Tool("Get alerts by specific error code for CPG troubleshooting")
     public String getAlertsByErrorCode(String errorCode, 
@@ -229,7 +250,7 @@ public class EdgeServerTools {
         }
     }
     
-    @Tool("Get current device status and connectivity information for CPG equipment")
+    @Tool("Get current raspberry pi device status and connectivity information for CPG equipment")
     public String getDeviceStatus(String deviceId) {
         long startTime = System.currentTimeMillis();
         logToolStart("getDeviceStatus", "deviceId", deviceId);
