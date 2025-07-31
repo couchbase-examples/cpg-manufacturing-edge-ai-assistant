@@ -12,11 +12,19 @@ A comprehensive AI-powered system for Consumer Packaged Goods (CPG) manufacturin
 **Device Layer (Raspberry Pi):**
 The IoT device runs the `CPGIoTTelemetryGenerator` application, which simulates a production machine by generating real-time sensor readings, alerts, and quality metrics. This data is stored locally in a **Couchbase Lite** database.
 
-**Edge Layer (Aggregation & Sync):**
-This layer consists of two key components running in Docker:
+**Edge Layer (On-prem Gateway, plant storage):**
+This on-prem layer runs Couchbase Edge Server in Docker at each plant, providing low-latency plant-level storage and acting as a gateway/cache. It replicates data upstream exactly as generated—no aggregation or transformation.
 
-- **Couchbase Edge Server:** Pushes operational data from IoT devices upstream **and pulls configuration data (plants, production lines, machines)**. It provides a REST API (port `59840`) that the `CPGCLIAgent` queries for real-time operational and hierarchical data (machines, plants, etc.).
-- **App Services (Sync Gateway):** Acts as the secure synchronization intermediary between the Edge Server and Capella. It uses channel-based replication on port `4984` to route data.
+- **Couchbase Edge Server:** Runs on-prem in Docker at each plant.
+  • **Pushes** operational data (`telemetry`, `alerts`, `quality_metrics`, `device_status`) upstream to Capella via Sync Gateway.
+  • **Pulls** configuration (`plants`, `production_lines`, `machines`) **and solution** documents down from Capella so they are available locally even when offline.
+  • Stores operational records locally for a configurable retention period; configuration & solution documents are cached permanently.
+  • Exposes a REST API (`:59840`) that the `CPGCLIAgent` uses to retrieve real-time operational and hierarchical information.
+
+**Sync Layer (Cloud Data Synchronization):**
+This cloud-hosted layer (Capella App Services) bridges the Edge and Cloud tiers, handling secure replication.
+
+- **App Services (Sync Gateway):** Runs in Couchbase Capella Cloud and acts as the secure synchronization intermediary between Edge Servers and Capella. It uses channel-based replication on port `4984` to route data.
 
 **Cloud Layer (Central & AI):**
 
@@ -27,12 +35,12 @@ This layer consists of two key components running in Docker:
 **CPG CLI Agent (Mobile/Field Application):**
 This application represents a user-facing tool (like a mobile or tablet app for a field technician). It does *not* run on the Edge Server. It has two primary toolsets for interacting with the system:
 
-- **EdgeServerTools:** Makes API calls to the **Couchbase Edge Server** to query real-time operational data, alerts, and hierarchical information like plant and machine details.
+- **EdgeServerTools:** Makes API calls to the **Couchbase Edge Server** to query real-time operational data, alerts, solutions and hierarchical information like plant and machine details.
 - **ManualSearchTools:** Uses a Couchbase Lite **replicator** to pull `manuals` from Capella (via App Services) into a local CBLite database, where an **on-device vector index is built during initialization**. This enables fast, offline-capable semantic search of documentation.
 
 ### Data Flow Summary
 
-- **Operational Data (Upward Push):** `telemetry`, `alerts`, `quality_metrics`, and `device_status` flow from the Raspberry Pi's CBLite DB → Edge Server → App Services, and are stored in Capella without aggregation.
+- **Operational Data (Upward Push):** `telemetry`, `alerts`, `quality_metrics`, and `device_status` flow from the Raspberry Pi's CBLite DB → Edge Server → App Services, and are stored in Capella.
 - **Knowledge Data (Downward Pull):**
   - `solutions` are pulled from Capella to the Edge Server.
   - `manuals` are pulled from Capella all the way to the CPG CLI Agent's local CBLite database for vector search.
@@ -129,42 +137,6 @@ erDiagram
     MACHINES ||--o{ QUALITY_METRICS : measures
     ALERTS ||--o{ SOLUTIONS : references
 ```
-
-## 🛠️ Components Overview
-
-### Core Applications
-
-| Component | Purpose | Technology | Port/Location |
-|-----------|---------|------------|---------------|
-| **Couchbase Edge Server** | Local data storage & sync | Couchbase | :59840 |
-| **Java CPG App** | IoT telemetry generation | Java 17, CBLite | Container |
-| **CPG CLI Agent** | AI-powered troubleshooting | Java, LangChain4j | Local |
-| **Python Setup Tools** | Data initialization | Python 3.8+ | Scripts |
-| **Couchbase Capella** | Cloud database & analytics | Couchbase Cloud | Cloud |
-| **App Services** | API gateway & sync gateway | Couchbase Cloud | :4984 |
-
-### AI Tools & Utilities
-
-| Tool | Description | Used By |
-|------|-------------|---------|
-| **EdgeServerTools** | Real-time operational data access | CLI Agent |
-| **ManualSearchTools** | Documentation & solution search | CLI Agent |
-| **VectorSearchUtil** | Semantic search capabilities | Manual Search |
-| **AlertGenerator** | Production alert simulation | IoT Generator |
-| **SensorDataGenerator** | Sensor reading simulation | IoT Generator |
-
-### Data Collections
-
-| Collection | Data Type | Retention | Index Fields |
-|------------|-----------|-----------|--------------|
-| `manufacturing.telemetry` | Sensor readings | 30 days | machine_id, sensor_type, timestamp |
-| `manufacturing.alerts` | Production alerts | 90 days | severity, status, error_code |
-| `manufacturing.quality_metrics` | Quality measurements | 365 days | machine_id, quality_grade |
-| `manufacturing.device_status` | Device health | 7 days | device_id, status |
-| `manufacturing.solutions` | Troubleshooting guides | Permanent | error_code, machine_type |
-| `manufacturing.machines` | Machine definitions | Permanent | machine_id, production_line_id |
-| `manufacturing.production_lines` | Line configurations | Permanent | production_line_id, plant_id |
-| `manufacturing.plants` | Plant information | Permanent | plant_id |
 
 ## 🚀 Quick Start
 
