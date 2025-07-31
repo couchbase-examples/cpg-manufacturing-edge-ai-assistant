@@ -1,0 +1,189 @@
+{
+  "$schema": "https://packages.couchbase.com/couchbase-edge-server/config_schema.json",
+  "interface": "0.0.0.0:59840",
+  "enable_anonymous_users": true,
+  "databases": {
+    "cpg_manufacturing": {
+      "path": "/opt/edge-server/data/manufacturing.cblite2",
+      "create": true,
+      "enable_client_writes": true,
+      "enable_client_sync": "bidirectional",
+      "enable_adhoc_queries": true,
+      "queries": {
+        "telemetry_by_machine": "SELECT * FROM _ WHERE machine_id = $MACHINE_ID ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
+        "active_alerts": "SELECT * FROM _ WHERE status = 'active' ORDER BY severity DESC, timestamp DESC LIMIT 20",
+        "alerts_by_error_code": "SELECT * FROM _ WHERE error_code = $ERROR_CODE ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
+        "device_status": "SELECT * FROM _ WHERE device_id = $DEVICE_ID ORDER BY timestamp DESC LIMIT 1",
+        "production_metrics_by_line": "SELECT * FROM _ WHERE production_line = $PRODUCTION_LINE ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
+        "quality_metrics_by_machine": "SELECT * FROM _ WHERE machine_id = $MACHINE_ID ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
+        "telemetry_by_sensor_type": "SELECT * FROM _ WHERE sensor_type = $SENSOR_TYPE ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
+        "maintenance_alerts": "SELECT * FROM _ ORDER BY timestamp DESC LIMIT IFNULL($maxResults, 10)",
+        "production_summary_metrics": "SELECT * FROM _ WHERE production_line = $PRODUCTION_LINE ORDER BY timestamp DESC LIMIT 3",
+        "production_summary_alerts": "SELECT * FROM _ WHERE status = 'active' AND production_line = $PRODUCTION_LINE ORDER BY severity DESC LIMIT 5",
+        "production_summary_quality": "SELECT * FROM _ WHERE production_line = $PRODUCTION_LINE ORDER BY timestamp DESC LIMIT 1",
+        "list_all_machines": "SELECT * FROM _ ORDER BY plant_id, production_line_id, machine_id",
+        "machine_by_id": "SELECT * FROM _ WHERE machine_id = $MACHINE_ID",
+        "list_all_production_lines": "SELECT * FROM _ ORDER BY plant_id, production_line_id",
+        "production_line_by_id": "SELECT * FROM _ WHERE production_line_id = $PRODUCTION_LINE_ID",
+        "list_all_plants": "SELECT * FROM _ ORDER BY plant_id",
+        "plant_by_id": "SELECT * FROM _ WHERE plant_id = $PLANT_ID"
+      },
+      "collections": {
+        "manufacturing.telemetry": {
+          "indexes": {
+            "byMachineTime": "machine_id",
+            "bySensorType": "sensor_type",
+            "byDevice": "device_id",
+            "byBatch": "batch_number",
+            "byProductionLine": "production_line",
+            "byProductCode": "product_code",
+            "byStatus": "status",
+            "byTimestamp": "timestamp"
+          }
+        },
+        "manufacturing.alerts": {
+          "indexes": {
+            "bySeverity": "severity",
+            "byStatus": "status",
+            "byErrorCode": "error_code",
+            "byMachine": "machine_id",
+            "byDevice": "device_id",
+            "byTimestamp": "timestamp",
+            "byProductionLine": "production_line",
+            "byBatch": "batch_number"
+          }
+        },
+        "manufacturing.device_status": {
+          "indexes": {
+            "byDevice": "device_id",
+            "byStatus": "status",
+            "byTimestamp": "timestamp"
+          }
+        },
+        "manufacturing.quality_metrics": {
+          "indexes": {
+            "byMachine": "machine_id",
+            "byDevice": "device_id",
+            "byTimestamp": "timestamp",
+            "byBatch": "batch_number",
+            "byProductCode": "product_code",
+            "byProductionLine": "production_line",
+            "byQualityGrade": "quality_grade"
+          }
+        },
+        "manufacturing.solutions": {
+          "indexes": {
+            "byErrorCode": "error_code",
+            "byMachineType": "machine_type",
+            "bySuccessRate": "success_rate",
+            "bySolutionId": "solution_id"
+          }
+        },
+        "manufacturing.firmware": {
+          "indexes": {
+            "byDeviceType": "device_type",
+            "byVersion": "version",
+            "byReleaseDate": "release_date"
+          }
+        },
+        "manufacturing.production_lines": {
+          "indexes": {
+            "byLineId": "production_line_id",
+            "byStatus": "status",
+            "byProductType": "current_product"
+          }
+        },
+        "manufacturing.machines": {
+          "indexes": {
+            "byMachineId": "machine_id",
+            "byMachineType": "machine_type",
+            "byProductionLine": "production_line_id",
+            "byStatus": "current_status"
+          }
+        },
+        "manufacturing.maintenance": {
+          "indexes": {
+            "byMaintenanceId": "maintenance_id",
+            "byMachineId": "machine_id",
+            "byMaintenanceType": "maintenance_type",
+            "byStatus": "status",
+            "byTechnician": "technician",
+            "byTimestamp": "scheduled_date"
+          }
+        },
+        "manufacturing.metrics": {
+          "indexes": {
+            "byLineId": "line_id",
+            "byTimestamp": "timestamp",
+            "byShift": "shift"
+          }
+        },
+        "manufacturing.plants": {
+          "indexes": {
+            "byPlantId": "plant_id",
+            "byName": "name",
+            "byLocation": "location"
+          }
+        }
+      }
+    }
+  },
+  "replications": [
+    {
+      "source": "wss://your-app-sync-gateway-url:4984/cpg_manufacturing",
+      "target": "cpg_manufacturing",
+
+      "continuous": true,
+      "collections": {
+        "manufacturing.plants": {
+          "channels": ["CPG_PLANT_001"]
+        },
+        "manufacturing.production_lines": {
+          "channels": ["CPG_PLANT_001"]
+        },
+        "manufacturing.machines": {
+          "channels": ["CPG_PLANT_001"]
+        },
+        "manufacturing.solutions": {
+          "channels": ["solutions"]
+        }
+      },
+      "auth": {
+        "user": "admin",
+        "password": "Password@12345"
+      }
+    },
+    {
+      "source": "cpg_manufacturing",
+      "target": "wss://your-app-sync-gateway-url:4984/cpg_manufacturing",
+      "continuous": true,
+      "collections": [
+        "manufacturing.telemetry",
+        "manufacturing.alerts",
+        "manufacturing.device_status",
+        "manufacturing.quality_metrics"
+      ],
+      "auth": {
+        "user": "admin",
+        "password": "Password"
+      }
+    }
+  ],
+  "logging": {
+    "console": true,
+    "file": {
+      "dir": "/opt/edge-server/logs",
+      "format": "text",
+      "maxSize": 104857600,
+      "rotateCount": 5
+    },
+    "domains": {
+      "Default": "info",
+      "REST": "info",
+      "Listener": "info",
+      "DB": "info",
+      "Query": "info",
+      "Sync": "info"
+    }
+  }
+} 
