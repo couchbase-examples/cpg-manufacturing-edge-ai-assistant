@@ -201,7 +201,7 @@ erDiagram
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd cursor
+cd cpg-manufacturing-edge-ai-assistant
 
 # Set up environment variables
 export GOOGLE_GEMINI_API_KEY="your-api-key-here"
