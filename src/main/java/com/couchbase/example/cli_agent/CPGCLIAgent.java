@@ -7,7 +7,8 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 import com.couchbase.lite.*;
 import java.time.Duration;
 import java.util.Scanner;
-
+import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 /**
  * CPG Troubleshooting CLI Agent using LangChain4j AI Services
  * 
@@ -72,7 +73,7 @@ public class CPGCLIAgent {
         // Initialize tools
         this.edgeServerTools = new EdgeServerTools();
         this.manualSearchTools = new ManualSearchTools(database);
-        
+        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(1000);
         // Configure AI model with edge device optimizations
         GoogleAiGeminiChatModel chatModel = GoogleAiGeminiChatModel.builder()
             .apiKey(googleGeminiApiKey)
@@ -86,6 +87,7 @@ public class CPGCLIAgent {
         this.agent = AiServices.builder(CLIAgent.class)
             .chatModel(chatModel)
             .tools(edgeServerTools, manualSearchTools)
+            .chatMemory(chatMemory)
             .build();
         
         System.out.println("🤖 CPG Troubleshooting CLI Agent initialized");
