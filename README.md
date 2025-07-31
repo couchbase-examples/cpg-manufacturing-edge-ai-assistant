@@ -6,31 +6,31 @@ A comprehensive AI-powered system for Consumer Packaged Goods (CPG) manufacturin
 
 ```mermaid
 graph TD;
-    subgraph Device Layer (Raspberry Pi)
+    subgraph device_layer ["Device Layer (Raspberry Pi)"]
         direction LR
         IoT_App("<b>CPGIoTTelemetryGenerator</b><br/>- Sensor/Alert Data<br/>- Quality Metrics")
         Local_CBLite("<b>CBLite DB (Operational)</b><br/>- telemetry, alerts<br/>- quality_metrics, device_status")
         IoT_App -->|writes| Local_CBLite
     end
 
-    subgraph Edge Layer (Aggregation)
+    subgraph edge_layer ["Edge Layer (Aggregation)"]
         Edge_Server("<b>Couchbase Edge Server</b><br/>- Aggregated Data DB<br/>- REST API (:59840)<br/>- Pulls 'solutions' data")
     end
     
-    subgraph Cloud Layer
+    subgraph cloud_layer ["Cloud Layer"]
         Capella_App_Services("<b>Capella App Services</b><br/>(Sync Gateway)<br/>- Port :4984")
         Capella_DB("<b>Couchbase Capella DB</b><br/>- Master Data Store<br/>- Knowledge Base (manuals, solutions)")
-        Python_Setup[Python Setup System] -.->|initializes| Capella_DB
+        Python_Setup["Python Setup System"] -.->|initializes| Capella_DB
         Capella_App_Services <-->|sync| Capella_DB
     end
 
-    subgraph "User Application Layer"
-        style UserApplicationLayer fill:#f9f9f9,stroke:#333,stroke-width:2px
+    subgraph user_app_layer ["User Application Layer"]
+        style user_app_layer fill:#f9f9f9,stroke:#333,stroke-width:2px
         
-        subgraph "CPG CLI Agent (Mobile/Field App)"
+        subgraph cli_agent ["CPG CLI Agent (Mobile/Field App)"]
             direction TB
             Agent_Logic("<b>Agent Logic</b><br/>(LangChain4j)")
-            subgraph Agent Tools
+            subgraph agent_tools ["Agent Tools"]
                 direction LR
                 EdgeTools("<b>EdgeServerTools</b>")
                 ManualTools("<b>ManualSearchTools</b>")
