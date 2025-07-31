@@ -207,6 +207,8 @@ cd cursor
 # Set up environment variables
 export GOOGLE_GEMINI_API_KEY="your-api-key-here"
 export APP_SERVICES_CLUSTER="your-cluster.apps.cloud.couchbase.com"
+export APP_SERVICES_USERNAME="your-app-services-username"
+export APP_SERVICES_PASSWORD="your-app-services-password"
 export COUCHBASE_CONNECTION_STRING="your-couchbase-connection-string"
 export COUCHBASE_USERNAME="your-couchbase-username"
 export COUCHBASE_PASSWORD="your-couchbase-password"

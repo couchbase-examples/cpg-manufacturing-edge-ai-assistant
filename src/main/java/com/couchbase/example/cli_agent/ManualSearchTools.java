@@ -22,9 +22,9 @@ import static com.couchbase.example.cli_agent.ToolTraceLogger.*;
 public class ManualSearchTools {
     
     // Constants
-    private static final String CAPELLA_ENDPOINT =  "wss://coz-fo7uthsqnali.apps.cloud.couchbase.com:4984/cpg_manufacturing";
-    private static final String CAPELLA_USERNAME = System.getenv().getOrDefault("CAPELLA_USERNAME", "");
-    private static final String CAPELLA_PASSWORD = System.getenv().getOrDefault("CAPELLA_PASSWORD", "");
+    private static final String CAPELLA_ENDPOINT =  System.getenv().getOrDefault("APP_SERVICES_CLUSTER", "");
+    private static final String CAPELLA_USERNAME = System.getenv().getOrDefault("APP_SERVICES_USERNAME", "");
+    private static final String CAPELLA_PASSWORD = System.getenv().getOrDefault("APP_SERVICES_PASSWORD", "");
 
     private static final int DEFAULT_SEARCH_LIMIT = 5;
     private static final double DEFAULT_SIMILARITY_THRESHOLD = 0.6;
