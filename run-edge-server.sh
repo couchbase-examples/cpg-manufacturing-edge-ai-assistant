@@ -86,11 +86,6 @@ validate_config() {
         exit 1
     fi
     
-    if [ ! -f "$USERS_CONFIG" ]; then
-        print_error "Users configuration file not found: $USERS_CONFIG"
-        exit 1
-    fi
-    
     # Check if placeholders are still present
     if grep -q "your-cluster.apps.cloud.couchbase.com" "$EDGE_SERVER_CONFIG"; then
         print_warning "Please update the Edge Server configuration with your actual Capella cluster details"

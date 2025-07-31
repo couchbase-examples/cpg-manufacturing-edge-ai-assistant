@@ -205,7 +205,7 @@ cd cursor
 
 # Set up environment variables
 export GOOGLE_GEMINI_API_KEY="your-api-key-here"
-export APP_SERVICES_CLUSTER="your-cluster.apps.cloud.couchbase.com"
+export APP_SERVICES_ENDPOINT="your-cluster.apps.cloud.couchbase.com"
 export APP_SERVICES_USERNAME="your-app-services-username"
 export APP_SERVICES_PASSWORD="your-app-services-password"
 export COUCHBASE_CONNECTION_STRING="your-couchbase-connection-string"
@@ -242,12 +242,8 @@ curl http://localhost:59840/
 
 ```bash
 # Interactive mode
-java -cp target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/dev/stdout) \
-     com.couchbase.example.cli_agent.CPGCLIAgent
+mvn exec:java -Dexec.mainClass="com.couchbase.example.cli_agent.CPGCLIAgent"
 
-# Single command mode
-java -cp target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/dev/stdout) \
-     com.couchbase.example.cli_agent.CPGCLIAgent "Get recent telemetry for MACHINE_001"
 ```
 
 ## 📋 Usage Examples
@@ -258,7 +254,7 @@ java -cp target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/d
 
 ```bash
 # Get machine telemetry
-"Get recent telemetry for MACHINE_001"
+"Why the MACHINE_001 stopped"
 
 # Check production alerts
 "Show active alerts for beverage filling line"
@@ -283,15 +279,6 @@ java -cp target/classes:$(mvn dependency:build-classpath -q -Dmdep.outputFile=/d
 "Get troubleshooting procedures for beverage_filling_line"
 ```
 
-**Combined Analysis:**
-
-```bash
-# Comprehensive troubleshooting
-"Analyze FILL_001 error on MACHINE_001"
-
-# Process optimization
-"Help with CO2 pressure issues on beverage line"
-```
 
 ### REST API Endpoints
 

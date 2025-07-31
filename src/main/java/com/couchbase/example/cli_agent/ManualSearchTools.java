@@ -22,7 +22,7 @@ import static com.couchbase.example.cli_agent.ToolTraceLogger.*;
 public class ManualSearchTools {
     
     // Constants
-    private static final String CAPELLA_ENDPOINT =  System.getenv().getOrDefault("CAPELLA_APP_SERVICES_ENDPOINT", "");
+    private static final String CAPELLA_ENDPOINT =  System.getenv().getOrDefault("APP_SERVICES_ENDPOINT", "");
     private static final String CAPELLA_USERNAME = System.getenv().getOrDefault("APP_SERVICES_USERNAME", "");
     private static final String CAPELLA_PASSWORD = System.getenv().getOrDefault("APP_SERVICES_PASSWORD", "");
 
