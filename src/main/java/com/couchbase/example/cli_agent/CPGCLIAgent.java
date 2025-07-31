@@ -32,7 +32,6 @@ public class CPGCLIAgent {
             
             - Edge Server Tools: For real-time CPG operational data (telemetry, alerts, device status, quality metrics, production data, machine information)
             - Manual Search Tools: For searching CPG documentation, troubleshooting guides, and solutions
-            - when find an error code search error code in manual and in the solutions return the details of the error code
             
             CPG Production Context:
             - Focus on beverage filling lines (carbonated beverages, bottling, packaging)
@@ -45,6 +44,7 @@ public class CPGCLIAgent {
             - Call the most relevant tools to gather operational and documentation data
             - Present the information in a clear, actionable format for production operators
             - If multiple tools are needed, use them to provide comprehensive troubleshooting information
+            - Error Code Lookup: When an error code is returned by a tool and no fix message is available, search for the error code in the manual and in past solutions. Return the details of the error code.
             - Focus on immediate actionable insights for CPG production issues
             """)
         String processRequest(@UserMessage String userInput);
