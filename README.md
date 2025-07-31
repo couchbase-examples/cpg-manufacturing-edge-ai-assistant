@@ -185,8 +185,9 @@ erDiagram
    # 5. Go to App Users, select the user you created, and set the admin channel for the solutions collection to "solutions".
    # 6. Update the App Services configuration to include these settings.
    #
-   # For a step-by-step video guide, see: https://www.youtube.com/watch?v=DXSfSkX0Epo&ab_channel=Couchbase
    ```
+
+   For a step-by-step video guide, see: <https://www.youtube.com/watch?v=DXSfSkX0Epo&ab_channel=Couchbase>
 
 4. **Update Configuration:**
 
