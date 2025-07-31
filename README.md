@@ -184,6 +184,8 @@ erDiagram
    # 4. In Access Control Validation, set custom sync scripts for plants, production_lines, and machines collections under custom scripts. For other collections, use the default script.
    # 5. Go to App Users, select the user you created, and set the admin channel for the solutions collection to "solutions".
    # 6. Update the App Services configuration to include these settings.
+   #
+   # For a step-by-step video guide, see: https://www.youtube.com/watch?v=DXSfSkX0Epo&ab_channel=Couchbase
    ```
 
 4. **Update Configuration:**
@@ -460,30 +462,60 @@ docker compose logs java-cpg-app | grep -i "sync\|replication"
 ## 🗂️ Project Structure
 
 ```text
-cursor/
-├── src/main/java/com/couchbase/example/
-│   ├── cli_agent/          # AI-powered CLI agent
-│   │   ├── CPGCLIAgent.java
-│   │   ├── EdgeServerTools.java
-│   │   └── ManualSearchTools.java
-│   └── iot_device/         # IoT telemetry generation
-│       ├── CPGIoTTelemetryGenerator.java
-│       ├── AlertGenerator.java
-│       └── SensorDataGenerator.java
-├── setup/                  # Python setup scripts
-│   ├── setup_system.py
+cpg-manufacturing-edge-ai-assistant/
+├── asserts/                    # Diagrams and images
+│   └── architecture.png
+├── config/                     # (Currently empty except for __pycache__)
+├── custom_scripts/             # JavaScript scripts for capella app services custom script
+│   ├── machines.js
+│   ├── plants.js
+│   └── production_lines.js
+├── setup/                      # Python setup and utility scripts to create collections and synthetic data 
+│   ├── __init__.py
+│   ├── alert_templates.json
+│   ├── check_similarity.py
+│   ├── COLLECTIONS.md
+│   ├── config.py
+│   ├── couchbase_client.py
 │   ├── document_processor.py
+│   ├── document_utils.py
+│   ├── list_machine_alerts.py
+│   ├── manual.txt
+│   ├── requirements.txt
 │   ├── sample_data_generator.py
-│   └── couchbase_client.py
-├── data/                   # Local data storage
-│   ├── edge-server/        # Edge server data
-│   └── cblite/            # CBLite databases
-├── config/                 # Configuration files
-├── edge-server-config.json # Edge server configuration
-├── docker-compose.yml      # Container orchestration
-├── run-edge-server.sh      # Edge server startup
-├── run-java-app.sh         # Java app startup
-└── setup.sh               # Complete setup script
+│   ├── setup_system.py
+│   ├── solution_optimizer.py
+├── src/
+│   └── main/
+│       ├── java/
+│       │   └── com/
+│       │       └── couchbase/
+│       │           └── example/
+│       │               ├── cli_agent/         # CLI agent and tools
+│       │               │   ├── CPGCLIAgent.java
+│       │               │   ├── EdgeServerTools.java
+│       │               │   ├── ManualSearchTools.java
+│       │               │   ├── ToolTraceLogger.java
+│       │               │   └── VectorSearchUtil.java
+│       │               └── iot_device/        # IoT telemetry and simulation
+│       │                   ├── AlertGenerator.java
+│       │                   ├── CPGIoTTelemetryGenerator.java
+│       │                   ├── IoTDeviceConfig.java
+│       │                   ├── SensorDataGenerator.java
+│       │                   └── SimulationUtils.java
+│       └── resources/
+│           └── simplelogger.properties
+├── c4_container.puml           # C4 model diagram
+├── docker-compose.yml          # Container orchestration
+├── Dockerfile.edge-server      # Dockerfile for Edge Server
+├── Dockerfile.java             # Dockerfile for Java app
+├── edge-server-config.json     # Edge server configuration
+├── LANGCHAIN4J_INTEGRATION.md  # LangChain4j integration notes
+├── pom.xml                     # Maven build file
+├── README.md                   # Project documentation
+├── run-edge-server.sh          # Edge server startup script
+└── run-java-app.sh             # Java app startup script
+
 ```
 
 ## 🚨 Troubleshooting
