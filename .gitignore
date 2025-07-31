@@ -130,3 +130,5 @@ CouchbaseLiteTemp
 data
 
 .vscode
+
+dev.sh
