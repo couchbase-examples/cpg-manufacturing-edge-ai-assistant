@@ -26,7 +26,8 @@
         "list_all_production_lines": "SELECT * FROM _ ORDER BY plant_id, production_line_id",
         "production_line_by_id": "SELECT * FROM _ WHERE production_line_id = $PRODUCTION_LINE_ID",
         "list_all_plants": "SELECT * FROM _ ORDER BY plant_id",
-        "plant_by_id": "SELECT * FROM _ WHERE plant_id = $PLANT_ID"
+        "plant_by_id": "SELECT * FROM _ WHERE plant_id = $PLANT_ID",
+        "list_all_solutions_for_error_code": "SELECT error_code, solution_comment FROM _ WHERE error_code = $ERROR_CODE ORDER BY success_rate DESC LIMIT 10"
       },
       "collections": {
         "manufacturing.telemetry": {
