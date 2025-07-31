@@ -45,6 +45,7 @@ public class EdgeServerTools {
     private final String machinesCollection = "machines";
     private final String productionLinesCollection = "production_lines";
     private final String plantsCollection = "plants";
+    private final String solutionsCollection = "solutions";
     private final String edgeServerBaseUrl;
 
     private final HttpClient httpClient;
@@ -834,6 +835,38 @@ public class EdgeServerTools {
             return String.format("❌ Error retrieving plant %s: %s", plantId, e.getMessage());
         }
     }
+
+    @Tool("List all solutions for a specific error code from CPG troubleshooting history")
+    public String listAllSolutionsForErrorCode(String errorCode,
+            @P(value = "Maximum number of results to return", required = false) Integer limitResults) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("listAllSolutionsForErrorCode", "errorCode", errorCode, "limitResults", limitResults);
+        try {
+            Map<String, Object> params = new HashMap<>();
+            params.put("ERROR_CODE", errorCode);
+            if (limitResults != null) {
+                params.put("maxResults", limitResults);
+            }
+            List<Map<String, Object>> results = executeNamedQuery("list_all_solutions_for_error_code", params);
+            if (results.isEmpty()) {
+                return String.format("📚 No solutions found for error code %s.", errorCode);
+            }
+            StringBuilder response = new StringBuilder();
+            response.append(String.format("📚 Solutions for Error Code %s (%d found):\n", errorCode, results.size()));
+            response.append("=".repeat(50)).append("\n");
+            int idx = 1;
+            for (Map<String, Object> solution : results) {
+                response.append(String.format("%d. 💡 %s\n", idx++, solution.getOrDefault("solution_comment", "No details available")));
+            }
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("listAllSolutionsForErrorCode", response.toString(), duration);
+            return response.toString();
+        } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("listAllSolutionsForErrorCode", e, duration);
+            return String.format("❌ Error retrieving solutions for error code %s: %s", errorCode, e.getMessage());
+        }
+    }
     
     // Helper methods
     
@@ -921,6 +954,9 @@ public class EdgeServerTools {
             case "list_all_plants":
             case "plant_by_id":
                 return plantsCollection;
+
+            case "list_all_solutions_for_error_code":
+                return solutionsCollection;
             
             default:
                 throw new IllegalArgumentException("Unknown query name: " + queryName);

@@ -44,7 +44,7 @@ public class CPGCLIAgent {
             - Call the most relevant tools to gather operational and documentation data
             - Present the information in a clear, actionable format for production operators
             - If multiple tools are needed, use them to provide comprehensive troubleshooting information
-            - Error Code Lookup: When an error code is returned by a tool and no fix message is available, search for the error code in the manual and in past solutions. Return the details of the error code.
+            - Error Code Lookup: When an error code is returned by a tool and no fix message is available, search for the error code in both the manual and past solutions. Present the details of the error code in separate sections: one for manual documentation and one for solution history.
             - Focus on immediate actionable insights for CPG production issues
             """)
         String processRequest(@UserMessage String userInput);
