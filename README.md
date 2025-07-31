@@ -183,6 +183,7 @@ erDiagram
    # 4. In Access Control Validation, set custom sync scripts for plants, production_lines, and machines collections under custom scripts. For other collections, use the default script.
    # 5. Go to App Users, select the user you created, and set the admin channel for the solutions collection to "solutions" and manuals collection to "manuals".
    # 6. Update the App Services configuration to include these settings.
+   # 7. Resync all the collections
    ```
 
    For a step-by-step video guide, see: <https://www.youtube.com/watch?v=DXSfSkX0Epo&ab_channel=Couchbase>
