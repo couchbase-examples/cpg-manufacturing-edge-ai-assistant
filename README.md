@@ -5,70 +5,102 @@ A comprehensive AI-powered system for Consumer Packaged Goods (CPG) manufacturin
 ## 🏗️ System Architecture
 
 ```mermaid
-graph TB
-    subgraph "CPG Manufacturing Plant"
-        subgraph "Production Line"
-            BFL[Beverage Filling Line]
-            PL[Packaging Line]
-            QCS[Quality Control Station]
-        end
+graph TD;
+    subgraph Device Layer (Raspberry Pi)
+        direction LR
+        IoT_App("<b>CPGIoTTelemetryGenerator</b><br/>- Sensor/Alert Data<br/>- Quality Metrics")
+        Local_CBLite("<b>CBLite DB (Operational)</b><br/>- telemetry, alerts<br/>- quality_metrics, device_status")
+        IoT_App -->|writes| Local_CBLite
+    end
+
+    subgraph Edge Layer (Aggregation)
+        Edge_Server("<b>Couchbase Edge Server</b><br/>- Aggregated Data DB<br/>- REST API (:59840)<br/>- Pulls 'solutions' data")
+    end
+    
+    subgraph Cloud Layer
+        Capella_App_Services("<b>Capella App Services</b><br/>(Sync Gateway)<br/>- Port :4984")
+        Capella_DB("<b>Couchbase Capella DB</b><br/>- Master Data Store<br/>- Knowledge Base (manuals, solutions)")
+        Python_Setup[Python Setup System] -.->|initializes| Capella_DB
+        Capella_App_Services <-->|sync| Capella_DB
+    end
+
+    subgraph "User Application Layer"
+        style UserApplicationLayer fill:#f9f9f9,stroke:#333,stroke-width:2px
         
-        subgraph "IoT Layer"
-            RPi[Raspberry Pi Device<br/>rpi-cpg-line1-01]
-            Sensors[Sensors<br/>Fill Level, CO2 Pressure<br/>Temperature, Speed, Weight]
+        subgraph "CPG CLI Agent (Mobile/Field App)"
+            direction TB
+            Agent_Logic("<b>Agent Logic</b><br/>(LangChain4j)")
+            subgraph Agent Tools
+                direction LR
+                EdgeTools("<b>EdgeServerTools</b>")
+                ManualTools("<b>ManualSearchTools</b>")
+            end
+            Agent_Local_CBLite("<b>Local CBLite DB</b><br/>- 'manuals' collection<br/>- Vector Search Index")
+            
+            Agent_Logic --> EdgeTools
+            Agent_Logic --> ManualTools
         end
+
+        Gemini("<b>Google Gemini AI</b><br/>External LLM")
     end
+
+    %% Data Flows
+    Local_CBLite -- "<b>1. Operational Data (push)</b>" --> Edge_Server;
+    Edge_Server -- "<b>2. Aggregated Data (sync)</b>" --> Capella_App_Services;
     
-    subgraph "Edge Computing Layer"
-        JavaApp[Java CPG App<br/>Telemetry Generator]
-        EdgeDB[(Couchbase Edge Server<br/>Local Database)]
-        CLIAgent[CPG CLI Agent<br/>AI Assistant]
-    end
+    Capella_DB -- "solutions" --> Capella_App_Services;
+    Capella_App_Services -- "<b>PULL (solutions)</b>" --> Edge_Server;
+
+    Capella_DB -- "manuals" --> Capella_App_Services;
+    Capella_App_Services -- "<b>3. PULL (manuals)</b>" --> ManualTools;
+    ManualTools -->|writes to| Agent_Local_CBLite;
+
+    %% Agent Interactions
+    EdgeTools -- "<b>API Call<br/>(Operational/Hierarchical Data)</b>" --> Edge_Server;
+    Agent_Logic -- "<b>API Call</b>" --> Gemini;
+
+    classDef default fill:#fff,stroke:#333,stroke-width:2px,color:#333;
+    classDef cloud fill:#e6f7ff,stroke:#0066cc,stroke-width:2px;
+    classDef edge fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
+    classDef device fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    classDef agent fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
     
-    subgraph "Cloud Layer"
-        Capella[(Couchbase Capella<br/>Cloud Database)]
-        AppServices[App Services<br/>API Gateway & Sync]
-        AI[Google Gemini AI<br/>LangChain4j]
-    end
-    
-    subgraph "Tools & Components"
-        EST[Edge Server Tools]
-        MST[Manual Search Tools]
-        VSU[Vector Search Util]
-        AG[Alert Generator]
-        SDG[Sensor Data Generator]
-    end
-    
-    %% Data Flow
-    Sensors --> RPi
-    RPi --> JavaApp
-    JavaApp --> EdgeDB
-    EdgeDB <--> AppServices
-    AppServices <--> Capella
-    
-    %% AI Integration
-    CLIAgent --> AI
-    CLIAgent --> EST
-    CLIAgent --> MST
-    EST --> EdgeDB
-    MST --> EdgeDB
-    
-    %% Internal Components
-    JavaApp --> AG
-    JavaApp --> SDG
-    CLIAgent --> VSU
-    
-    %% Styling
-    classDef iot fill:#e1f5fe
-    classDef edge fill:#f3e5f5
-    classDef cloud fill:#e8f5e8
-    classDef tools fill:#fff3e0
-    
-    class RPi,Sensors,BFL,PL,QCS iot
-    class JavaApp,EdgeDB,CLIAgent edge
-    class Capella,AI cloud
-    class EST,MST,VSU,AG,SDG tools
+    class IoT_App,Local_CBLite device;
+    class Edge_Server edge;
+    class Capella_App_Services,Capella_DB,Python_Setup cloud;
+    class Agent_Logic,EdgeTools,ManualTools,Agent_Local_CBLite,Gemini agent;
 ```
+
+### Detailed Component Architecture
+
+**Device Layer (Raspberry Pi):**
+The IoT device runs the `CPGIoTTelemetryGenerator` application, which simulates a production machine by generating real-time sensor readings, alerts, and quality metrics. This data is stored locally in a **Couchbase Lite** database.
+
+**Edge Layer (Aggregation & Sync):**
+This layer consists of two key components running in Docker:
+
+- **Couchbase Edge Server:** Aggregates operational data from IoT devices. It provides a REST API (port `59840`) that the `CPGCLIAgent` queries for real-time operational and hierarchical data (machines, plants, etc.).
+- **App Services (Sync Gateway):** Acts as the secure synchronization intermediary between the Edge Server and Capella. It uses channel-based replication on port `4984` to route data.
+
+**Cloud Layer (Central & AI):**
+
+- **Couchbase Capella:** The central cloud database. It serves as the master source of truth for knowledge data (`manuals`, `solutions`) and configuration data (`plants`, `machines`). It is the final destination for aggregated operational data for analytics.
+- **Python Setup System:** A set of scripts used for one-time data initialization, including processing manuals and generating sample data in Capella.
+- **Google Gemini AI:** An external Large Language Model, integrated via **LangChain4j**, that provides natural language understanding and reasoning for the CLI agent.
+
+**CPG CLI Agent (Mobile/Field Application):**
+This application represents a user-facing tool (like a mobile or tablet app for a field technician). It does *not* run on the Edge Server. It has two primary toolsets for interacting with the system:
+
+- **EdgeServerTools:** Makes API calls to the **Couchbase Edge Server** to query real-time operational data, alerts, and hierarchical information like plant and machine details.
+- **ManualSearchTools:** Pulls `manuals` from Capella (via App Services) into its **own local Couchbase Lite database**. It then performs fast, offline-capable **vector search** on this local data to find documentation.
+
+### Data Flow Summary
+
+- **Operational Data (Upward Push):** `telemetry`, `alerts`, `quality_metrics`, and `device_status` flow from the Raspberry Pi's CBLite DB -> Edge Server -> App Services -> Capella.
+- **Knowledge Data (Downward Pull):**
+  - `solutions` are pulled from Capella to the Edge Server.
+  - `manuals` are pulled from Capella all the way to the CPG CLI Agent's local CBLite database for vector search.
+- **Configuration Data (Downward Pull):** `plants`, `production_lines`, and `machines` are pulled from Capella to the Edge Server so the `CPGCLIAgent` can query them.
 
 ## 📊 Data Collections & Relationships
 
