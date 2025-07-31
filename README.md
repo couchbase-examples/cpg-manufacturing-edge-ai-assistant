@@ -6,7 +6,6 @@ A comprehensive AI-powered system for Consumer Packaged Goods (CPG) manufacturin
 
 ![System Architecture Overview](asserts/architecture.png)
 
-
 ### Detailed Component Architecture
 
 **Device Layer (Raspberry Pi):**
@@ -160,23 +159,31 @@ erDiagram
    # Choose "Developer Pro" or higher for App Services
    ```
 
-2. **Create Database and Collections:**
+2. **Create Database and Initialize Data:**
+
+   In the Capella UI, create a bucket named `cpg_manufacturing` and enable App Services.
+
+   After creating the bucket, run the setup script to create the required collections, scope, and synthetic data. This script requires Python dependencies.
 
    ```bash
-   # In Capella Console:
-   # 1. Create bucket: "cpg_manufacturing"
-   # 2. Create scope: "manufacturing"
-   # 3. Enable App Services for the bucket
+   # Install Python dependencies
+   pip install -r setup/requirements.txt
+
+   # Run system setup (creates collections, scope, indexes, and sample data)
+   cd setup
+   python setup_system.py
    ```
 
 3. **Configure App Services:**
 
    ```bash
    # In App Services section:
-   # 1. Create App Service endpoint
-   # 2. Configure sync function for collections
-   # 3. Set up user authentication
-   # 4. Note down the App Services URL
+   # 1. Create App Service endpoint in Capella.
+   # 2. Link all the collections to be synced: plants, production_lines, machines, solutions, telemetry, alerts, quality_metrics, device_status.
+   # 3. Create an App User under App Users.
+   # 4. In Access Control Validation, set custom sync scripts for plants, production_lines, and machines collections under custom scripts. For other collections, use the default script.
+   # 5. Go to App Users, select the user you created, and set the admin channel for the solutions collection to "solutions".
+   # 6. Update the App Services configuration to include these settings.
    ```
 
 4. **Update Configuration:**
@@ -198,7 +205,11 @@ cd cursor
 # Set up environment variables
 export GOOGLE_GEMINI_API_KEY="your-api-key-here"
 export APP_SERVICES_CLUSTER="your-cluster.apps.cloud.couchbase.com"
-export APP_SERVICES_API_KEY="your-api-key"
+export COUCHBASE_CONNECTION_STRING="your-couchbase-connection-string"
+export COUCHBASE_USERNAME="your-couchbase-username"
+export COUCHBASE_PASSWORD="your-couchbase-password"
+export COUCHBASE_BUCKET_NAME="cpg_manufacturing"
+export APP_NAME="CPG Manufacturing AI Assistant"
 
 # Make scripts executable
 chmod +x run-edge-server.sh run-java-app.sh setup.sh
@@ -214,18 +225,7 @@ chmod +x run-edge-server.sh run-java-app.sh setup.sh
 curl http://localhost:59840/
 ```
 
-### 4. Initialize Data
-
-```bash
-# Install Python dependencies
-pip install -r setup/requirements.txt
-
-# Run system setup (creates collections, indexes, sample data)
-cd setup
-python setup_system.py
-```
-
-### 5. Start IoT Data Generation
+### 4. Start IoT Data Generation
 
 ```bash
 # Start telemetry data generation
@@ -235,7 +235,7 @@ python setup_system.py
 ./run-java-app.sh --local
 ```
 
-### 6. Use CLI Agent
+### 5. Use CLI Agent
 
 ```bash
 # Interactive mode
