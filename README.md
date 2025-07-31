@@ -123,9 +123,9 @@ erDiagram
         string solution_id PK
         string error_code
         string solution_comment
+        array embeddings
         string created_at
         string updated_at
-        array embeddings
     }
     
     PLANTS ||--o{ PRODUCTION_LINES : contains
