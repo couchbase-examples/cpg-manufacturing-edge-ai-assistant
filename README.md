@@ -4,72 +4,50 @@ A comprehensive AI-powered system for Consumer Packaged Goods (CPG) manufacturin
 
 ## 🏗️ System Architecture
 
-```mermaid
-graph TD;
-    subgraph device_layer ["Device Layer (Raspberry Pi)"]
-        direction LR
-        IoT_App("<b>CPGIoTTelemetryGenerator</b><br/>- Sensor/Alert Data<br/>- Quality Metrics")
-        Local_CBLite("<b>CBLite DB (Operational)</b><br/>- telemetry, alerts<br/>- quality_metrics, device_status")
-        IoT_App -->|writes| Local_CBLite
-    end
+C4Container
+title "CPG Manufacturing Edge AI – Container Diagram"
 
-    subgraph edge_layer ["Edge Layer (Aggregation)"]
-        Edge_Server("<b>Couchbase Edge Server</b><br/>- Aggregated Data DB<br/>- REST API (:59840)<br/>- Pulls 'solutions' data")
-    end
-    
-    subgraph cloud_layer ["Cloud Layer"]
-        Capella_App_Services("<b>Capella App Services</b><br/>(Sync Gateway)<br/>- Port :4984")
-        Capella_DB("<b>Couchbase Capella DB</b><br/>- Master Data Store<br/>- Knowledge Base (manuals, solutions)")
-        Python_Setup["Python Setup System"] -.->|initializes| Capella_DB
-        Capella_App_Services <-->|sync| Capella_DB
-    end
+Person(Technician, "Field Technician / Maintenance Engineer")
 
-    subgraph user_app_layer ["User Application Layer"]
-        style user_app_layer fill:#f9f9f9,stroke:#333,stroke-width:2px
-        
-        subgraph cli_agent ["CPG CLI Agent (Mobile/Field App)"]
-            direction TB
-            Agent_Logic("<b>Agent Logic</b><br/>(LangChain4j)")
-            subgraph agent_tools ["Agent Tools"]
-                direction LR
-                EdgeTools("<b>EdgeServerTools</b>")
-                ManualTools("<b>ManualSearchTools</b>")
-            end
-            Agent_Local_CBLite("<b>Local CBLite DB</b><br/>- 'manuals' collection<br/>- Vector Search Index")
-            
-            Agent_Logic --> EdgeTools
-            Agent_Logic --> ManualTools
-        end
+System_Boundary(rpi, "Device Layer (Raspberry Pi)") {
+  Container(IoTApp, "CPGIoTTelemetryGenerator", "Application", "Generates sensor, alert & quality data")
+  ContainerDb(DeviceCBLite, "CBLite (Operational)", "Embedded DB", "telemetry, alerts, quality_metrics, device_status")
+}
 
-        Gemini("<b>Google Gemini AI</b><br/>External LLM")
-    end
+System_Boundary(edge, "Edge Layer") {
+  Container(EdgeServer, "Couchbase Edge Server", "Docker Container", "Aggregates operational data & exposes REST API (:59840)")
+}
 
-    %% Data Flows
-    Local_CBLite -- "<b>1. Operational Data (push)</b>" --> Edge_Server;
-    Edge_Server -- "<b>2. Aggregated Data (sync)</b>" --> Capella_App_Services;
-    
-    Capella_DB -- "solutions" --> Capella_App_Services;
-    Capella_App_Services -- "<b>PULL (solutions)</b>" --> Edge_Server;
+System_Boundary(sync, "Sync Layer") {
+  Container(AppSvc, "Capella App Services (Sync Gateway)", "Container", "Channel-based replication (:4984)")
+}
 
-    Capella_DB -- "manuals" --> Capella_App_Services;
-    Capella_App_Services -- "<b>3. PULL (manuals)</b>" --> ManualTools;
-    ManualTools -->|writes to| Agent_Local_CBLite;
+System_Boundary(cloud, "Cloud Layer") {
+  ContainerDb(CapellaDB, "Couchbase Capella", "Database", "Master data store (manuals, solutions, aggregated data)")
+}
 
-    %% Agent Interactions
-    EdgeTools -- "<b>API Call<br/>(Operational/Hierarchical Data)</b>" --> Edge_Server;
-    Agent_Logic -- "<b>API Call</b>" --> Gemini;
+System_Boundary(agent, "CPG CLI Agent (Mobile App)") {
+  Container(AgentLogic, "Agent Logic", "LangChain4j", "Orchestrates reasoning / tool calls")
+  Container(EdgeTools, "EdgeServerTools", "Library", "Queries Edge Server")
+  Container(ManualTools, "ManualSearchTools", "Library", "Vector search on manuals")
+  ContainerDb(AgentCBLite, "Local CBLite (manuals)", "Embedded DB", "Vector index for offline search")
+}
 
-    classDef default fill:#fff,stroke:#333,stroke-width:2px,color:#333;
-    classDef cloud fill:#e6f7ff,stroke:#0066cc,stroke-width:2px;
-    classDef edge fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
-    classDef device fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
-    classDef agent fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
-    
-    class IoT_App,Local_CBLite device;
-    class Edge_Server edge;
-    class Capella_App_Services,Capella_DB,Python_Setup cloud;
-    class Agent_Logic,EdgeTools,ManualTools,Agent_Local_CBLite,Gemini agent;
-```
+System_Ext(Gemini, "Google Gemini", "LLM API")
+
+Rel(IoTApp, DeviceCBLite, "writes data")
+Rel(DeviceCBLite, EdgeServer, "sync (push)")
+Rel(EdgeServer, AppSvc, "sync (push)")
+Rel(AppSvc, CapellaDB, "sync")
+Rel_D(CapellaDB, AppSvc, "manuals & solutions")
+Rel(AppSvc, EdgeServer, "pull solutions")
+Rel(AppSvc, ManualTools, "pull manuals")
+Rel(EdgeTools, EdgeServer, "REST API (operational / hierarchy data)")
+Rel(AgentLogic, EdgeTools, "invokes")
+Rel(AgentLogic, ManualTools, "invokes")
+Rel(ManualTools, AgentCBLite, "stores manuals")
+Rel(AgentLogic, Gemini, "prompt / response")
+Rel(Technician, AgentLogic, "uses")
 
 ### Detailed Component Architecture
 
