@@ -19,7 +19,7 @@ public class AlertGenerator {
     /**
      * Creates a base simulated alert map with common fields
      */
-    public Map<String, Object> createBaseAlert(String alertType, String errorCode, String severity, String message, String timestamp) {
+    public Map<String, Object> createBaseAlert(String alertType, String errorCode, String severity, String timestamp) {
         long alertId = alertCounter.incrementAndGet();
         String alertIdString = String.format("CPG_%s_%s_%06d", 
                                            alertType.toUpperCase(),
@@ -34,7 +34,6 @@ public class AlertGenerator {
         alert.put("error_code", errorCode);
         alert.put("severity", severity);
         alert.put("status", "active");
-        alert.put("message", message);
         alert.put("timestamp", timestamp);
         alert.put("production_line", IoTDeviceConfig.PRODUCTION_LINE);
         alert.put("product_type", IoTDeviceConfig.PRODUCT_TYPE);
@@ -80,7 +79,7 @@ public class AlertGenerator {
                                        double ambientTemperature, int currentBatchNumber, String currentProductCode) {
         if (ambientTemperature < IoTDeviceConfig.MIN_OPERATING_TEMP_C || 
             ambientTemperature > IoTDeviceConfig.MAX_OPERATING_TEMP_C) {
-            alerts.add(createManualErrorCodeAlert("E036", timestamp, "Ambient temperature out of operating range", 
+            alerts.add(createManualErrorCodeAlert("E036", timestamp, 
                                                 ambientTemperature, (IoTDeviceConfig.MIN_OPERATING_TEMP_C + IoTDeviceConfig.MAX_OPERATING_TEMP_C) / 2,
                                                 currentBatchNumber, currentProductCode));
         }
@@ -92,14 +91,14 @@ public class AlertGenerator {
     public void checkUtilitySystemAlerts(List<Map<String, Object>> alerts, String timestamp, 
                                        double airPressure, double waterPressure, int currentBatchNumber, String currentProductCode) {
         if (airPressure < IoTDeviceConfig.MIN_AIR_PRESSURE_PSI) {
-            alerts.add(createManualErrorCodeAlert("E009", timestamp, "Compressed air pressure below minimum", 
+            alerts.add(createManualErrorCodeAlert("E009", timestamp, 
                                                 airPressure, IoTDeviceConfig.MIN_AIR_PRESSURE_PSI,
                                                 currentBatchNumber, currentProductCode));
         }
         
         if (waterPressure < IoTDeviceConfig.MIN_WATER_PRESSURE_PSI || 
             waterPressure > IoTDeviceConfig.MAX_WATER_PRESSURE_PSI) {
-            alerts.add(createManualErrorCodeAlert("E037", timestamp, "Facility water pressure out of range", 
+            alerts.add(createManualErrorCodeAlert("E037", timestamp, 
                                                 waterPressure, (IoTDeviceConfig.MIN_WATER_PRESSURE_PSI + IoTDeviceConfig.MAX_WATER_PRESSURE_PSI) / 2,
                                                 currentBatchNumber, currentProductCode));
         }
@@ -114,18 +113,18 @@ public class AlertGenerator {
         // Check speed control
         if (currentSpeed < IoTDeviceConfig.MIN_SPEED_CONTAINERS_PER_MINUTE || 
             currentSpeed > IoTDeviceConfig.MAX_SPEED_CONTAINERS_PER_MINUTE) {
-            alerts.add(createManualErrorCodeAlert("E018", timestamp, "Line speed out of specification", 
+            alerts.add(createManualErrorCodeAlert("E018", timestamp, 
                                                 currentSpeed, IoTDeviceConfig.IDEAL_SPEED_TARGET,
                                                 currentBatchNumber, currentProductCode));
         }
         
         // Check fill level
         if (currentFillLevel < IoTDeviceConfig.FILL_LEVEL_CRITICAL_THRESHOLD) {
-            alerts.add(createManualErrorCodeAlert("E045", timestamp, "Fill level sensor critical threshold", 
+            alerts.add(createManualErrorCodeAlert("E045", timestamp, 
                                                  currentFillLevel, IoTDeviceConfig.FILL_LEVEL_WARNING_THRESHOLD,
                                                  currentBatchNumber, currentProductCode));
         } else if (currentFillLevel < IoTDeviceConfig.FILL_LEVEL_WARNING_THRESHOLD) {
-            alerts.add(createAlert("FILL_002", "medium", "Fill level approaching minimum threshold", 
+            alerts.add(createAlert("FILL_002", "medium", 
                                  currentFillLevel, IoTDeviceConfig.FILL_LEVEL_WARNING_THRESHOLD, timestamp,
                                  currentBatchNumber, currentProductCode));
         }
@@ -133,21 +132,21 @@ public class AlertGenerator {
         // Check pressure
         if (currentPressure < IoTDeviceConfig.CO2_PRESSURE_WARNING_MIN || 
             currentPressure > IoTDeviceConfig.CO2_PRESSURE_WARNING_MAX) {
-            alerts.add(createManualErrorCodeAlert("E045", timestamp, "CO2 pressure sensor out of specification", 
+            alerts.add(createManualErrorCodeAlert("E045", timestamp, 
                                                  currentPressure, IoTDeviceConfig.CO2_PRESSURE_WARNING_MIN,
                                                  currentBatchNumber, currentProductCode));
         }
         
         // Check temperature control
         if (Math.abs(currentTemperature - 4.5) > IoTDeviceConfig.TEMPERATURE_CONTROL_TOLERANCE) {
-            alerts.add(createManualErrorCodeAlert("E004", timestamp, "Product temperature control deviation", 
+            alerts.add(createManualErrorCodeAlert("E004", timestamp, 
                                                  currentTemperature, 4.5, currentBatchNumber, currentProductCode));
         }
         
         // Check package weight accuracy
         if (Math.abs(currentWeight - IoTDeviceConfig.PACKAGE_WEIGHT_TARGET_GRAMS) > 
             (IoTDeviceConfig.PACKAGE_WEIGHT_TARGET_GRAMS * IoTDeviceConfig.FILL_WEIGHT_ACCURACY_TOLERANCE)) {
-            alerts.add(createManualErrorCodeAlert("E019", timestamp, "Package weight position error", 
+            alerts.add(createManualErrorCodeAlert("E019", timestamp, 
                                                  currentWeight, IoTDeviceConfig.PACKAGE_WEIGHT_TARGET_GRAMS,
                                                  currentBatchNumber, currentProductCode));
         }
@@ -160,18 +159,18 @@ public class AlertGenerator {
                                  double fillAccuracy, double labelAlignment, double capTorque,
                                  int currentBatchNumber, String currentProductCode) {
         if (fillAccuracy < IoTDeviceConfig.MIN_FILL_ACCURACY_PERCENT) {
-            alerts.add(createQualityAlert("QUAL_001", "medium", "Fill accuracy below Manual target", timestamp,
+            alerts.add(createQualityAlert("QUAL_001", "medium", timestamp,
                                         fillAccuracy, labelAlignment, capTorque, currentBatchNumber, currentProductCode));
         }
         
         if (labelAlignment < IoTDeviceConfig.MIN_LABEL_ALIGNMENT_PERCENT) {
-            alerts.add(createQualityAlert("QUAL_002", "medium", "Label alignment below Manual specification", timestamp,
+            alerts.add(createQualityAlert("QUAL_002", "medium", timestamp,
                                         fillAccuracy, labelAlignment, capTorque, currentBatchNumber, currentProductCode));
         }
         
         if (capTorque < IoTDeviceConfig.MIN_CAP_TORQUE_INCH_POUNDS || 
             capTorque > IoTDeviceConfig.MAX_CAP_TORQUE_INCH_POUNDS) {
-            alerts.add(createQualityAlert("QUAL_003", "high", "Cap torque out of Manual specification", timestamp,
+            alerts.add(createQualityAlert("QUAL_003", "high", timestamp,
                                         fillAccuracy, labelAlignment, capTorque, currentBatchNumber, currentProductCode));
         }
     }
@@ -185,7 +184,7 @@ public class AlertGenerator {
         if (SimulationUtils.generateRandomInRange(1, 100) <= IoTDeviceConfig.COMMUNICATION_ERROR_PROBABILITY_PERCENT) {
             String[] commErrors = {"E014", "E052"};
             String errorCode = commErrors[SimulationUtils.generateRandomInRange(0, commErrors.length - 1)];
-            alerts.add(createManualErrorCodeAlert(errorCode, timestamp, "Network communication issue detected", 
+            alerts.add(createManualErrorCodeAlert(errorCode, timestamp, 
                                                 0, 0, currentBatchNumber, currentProductCode));
         }
         
@@ -193,7 +192,7 @@ public class AlertGenerator {
         if (SimulationUtils.generateRandomInRange(1, 100) <= IoTDeviceConfig.ELECTRICAL_ERROR_PROBABILITY_PERCENT) {
             String[] electricalErrors = {"E034", "E048", "E050"};
             String errorCode = electricalErrors[SimulationUtils.generateRandomInRange(0, electricalErrors.length - 1)];
-            alerts.add(createManualErrorCodeAlert(errorCode, timestamp, "Electrical system fault detected", 
+            alerts.add(createManualErrorCodeAlert(errorCode, timestamp, 
                                                 0, 0, currentBatchNumber, currentProductCode));
         }
     }
@@ -210,10 +209,10 @@ public class AlertGenerator {
     /**
      * Creates a standard alert
      */
-    public Map<String, Object> createAlert(String errorCode, String severity, String message, 
+    public Map<String, Object> createAlert(String errorCode, String severity, 
                                          double currentValue, double threshold, String timestamp,
                                          int currentBatchNumber, String currentProductCode) {
-        Map<String, Object> alert = createBaseAlert("alert", errorCode, severity, message, timestamp);
+        Map<String, Object> alert = createBaseAlert("alert", errorCode, severity, timestamp);
         addBatchInfo(alert, currentBatchNumber, currentProductCode);
         alert.put("current_value", Math.round(currentValue * 100.0) / 100.0);
         alert.put("threshold", threshold);
@@ -223,10 +222,10 @@ public class AlertGenerator {
     /**
      * Creates a quality alert
      */
-    public Map<String, Object> createQualityAlert(String errorCode, String severity, String message, String timestamp,
+    public Map<String, Object> createQualityAlert(String errorCode, String severity, String timestamp,
                                                  double fillAccuracy, double labelAlignment, double capTorque,
                                                  int currentBatchNumber, String currentProductCode) {
-        Map<String, Object> alert = createBaseAlert("quality_alert", errorCode, severity, message, timestamp);
+        Map<String, Object> alert = createBaseAlert("quality_alert", errorCode, severity, timestamp);
         addBatchInfo(alert, currentBatchNumber, currentProductCode);
         alert.put("fill_accuracy", fillAccuracy);
         alert.put("label_alignment", labelAlignment);
@@ -237,13 +236,13 @@ public class AlertGenerator {
     /**
      * Creates a manual error code alert
      */
-    public Map<String, Object> createManualErrorCodeAlert(String errorCode, String timestamp, String message, 
+    public Map<String, Object> createManualErrorCodeAlert(String errorCode, String timestamp, 
                                                          double currentValue, double threshold,
                                                          int currentBatchNumber, String currentProductCode) {
         IoTDeviceConfig.ErrorCodeInfo errorInfo = IoTDeviceConfig.ERROR_CODES.get(errorCode);
         String severity = (errorInfo != null) ? errorInfo.severity : "medium";
         
-        Map<String, Object> alert = createBaseAlert("manual_error_alert", errorCode, severity, message, timestamp);
+        Map<String, Object> alert = createBaseAlert("manual_error_alert", errorCode, severity, timestamp);
         addBatchInfo(alert, currentBatchNumber, currentProductCode);
         alert.put("current_value", Math.round(currentValue * 100.0) / 100.0);
         alert.put("threshold", threshold);
@@ -265,9 +264,8 @@ public class AlertGenerator {
         String maintenanceType = IoTDeviceConfig.MAINTENANCE_TYPES[SimulationUtils.generateRandomInRange(0, IoTDeviceConfig.MAINTENANCE_TYPES.length - 1)];
         String[] maintenanceCodes = {"E027", "E043", "MAINT_001"};
         String errorCode = maintenanceCodes[SimulationUtils.generateRandomInRange(0, maintenanceCodes.length - 1)];
-        String message = "Scheduled maintenance per Manual Section 7: " + maintenanceType;
         
-        Map<String, Object> alert = createBaseAlert("manual_maintenance_alert", errorCode, "low", message, timestamp);
+        Map<String, Object> alert = createBaseAlert("manual_maintenance_alert", errorCode, "low", timestamp);
         alert.put("status", "scheduled"); // Override status for maintenance alerts
         alert.put("maintenance_type", maintenanceType);
         alert.put("estimated_duration_minutes", SimulationUtils.getMaintenanceDuration(maintenanceType));

@@ -8,11 +8,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import static com.couchbase.example.cli_agent.ToolTraceLogger.*;
 
 /**
  * LangChain4j Tools for performing vector search on CBLite manual collections.
@@ -25,49 +22,69 @@ import java.time.format.DateTimeFormatter;
 public class ManualSearchTools {
     
     // Constants
-    private static final String CAPELLA_ENDPOINT = System.getenv().getOrDefault("CAPELLA_APP_SERVICES_ENDPOINT", "");
+    private static final String CAPELLA_ENDPOINT =  "wss://coz-fo7uthsqnali.apps.cloud.couchbase.com:4984/cpg_manufacturing";
     private static final String CAPELLA_USERNAME = System.getenv().getOrDefault("CAPELLA_USERNAME", "");
     private static final String CAPELLA_PASSWORD = System.getenv().getOrDefault("CAPELLA_PASSWORD", "");
-    private static final int SYNC_TIMEOUT_SECONDS = 60;
-    private static final String LOG_FILE_PATH = "data/manual_search_tools.log";
-    private static final DateTimeFormatter LOG_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     private static final int DEFAULT_SEARCH_LIMIT = 5;
     private static final double DEFAULT_SIMILARITY_THRESHOLD = 0.6;
+    
+    // UI Constants
+    private static final String SEPARATOR_LINE = "=".repeat(50);
+    private static final String SHORT_SEPARATOR_LINE = "=".repeat(30);
+    private static final String ERROR_PREFIX = "❌ Error ";
+    private static final String SUCCESS_CHECKMARK = "✅";
+    private static final String SEARCH_ICON = "🔍";
+    private static final String SYNC_ICON = "🔄";
+    private static final String BOOK_ICON = "📚";
+    private static final String MANUAL_TYPE_FILTER_ANY = "any";
+    
+    // Logger and tracing configuration
+    private static final Logger logger = com.couchbase.example.cli_agent.ToolTraceLogger.LOGGER;
     
     // Instance variables
     private final Collection manualsCollection;
     private final VectorSearchUtil vectorSearchUtil;
     private Replicator downwardReplicator;
     private volatile boolean isReplicationActive = false;
-    private PrintWriter logWriter;
+
     
     public ManualSearchTools(Database database) throws CouchbaseLiteException {
         this.manualsCollection = initializeCollection(database);
         this.vectorSearchUtil = new VectorSearchUtil(database);
         
-        initializeFileLogging();
         initializeVectorIndexes();
         setupDownwardReplication();
     }
     
     @Tool("Search through equipment manuals and documentation using semantic search")
     public String searchManuals(String query, String machineType) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("searchManuals", "query", query, "machineType", machineType);
         try {
-            logToFile(String.format("🔍 Searching manuals for: '%s' (machine type: %s)", query, machineType));
+            logToFile(String.format(SEARCH_ICON + " Searching manuals for: '%s' (machine type: %s)", query, machineType));
             
             long manualCount = manualsCollection.getCount();
             if (manualCount == 0) {
-                return "📚 No manuals found locally. Manual sync may still be in progress. Please try again in a moment.";
+                String response = BOOK_ICON + " No manuals found locally. Manual sync may still be in progress. Please try again in a moment.";
+                long duration = System.currentTimeMillis() - startTime;
+                logToolEnd("searchManuals", response, duration);
+                return response;
             }
             
             List<VectorSearchUtil.VectorSearchResult> vectorResults = vectorSearchUtil.vectorSearch(
                 manualsCollection, query, "content", DEFAULT_SEARCH_LIMIT, DEFAULT_SIMILARITY_THRESHOLD
             );
             
-            return formatSearchResults(query, vectorResults, manualCount, machineType);
+            String response = formatSearchResults(query, vectorResults, manualCount, machineType);
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("searchManuals", response, duration);
+            return response;
             
         } catch (Exception e) {
-            String errorMsg = String.format("❌ Error searching manuals: %s", e.getMessage());
+            long duration = System.currentTimeMillis() - startTime;
+            String errorMsg = String.format(ERROR_PREFIX + "searching manuals: %s", e.getMessage());
+            logToolError("searchManuals", e, duration);
             logToFile(errorMsg);
             return errorMsg;
         }
@@ -75,8 +92,13 @@ public class ManualSearchTools {
     
     @Tool("Get the status of manual data synchronization from Capella")
     public String getSyncStatus() {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getSyncStatus");
         if (downwardReplicator == null) {
-            return logAndReturn("❌ Manual replication not configured");
+            String msg = logAndReturn(ERROR_PREFIX + "Manual replication not configured");
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getSyncStatus", msg, duration);
+            return msg;
         }
         
         ReplicatorStatus status = downwardReplicator.getStatus();
@@ -84,7 +106,7 @@ public class ManualSearchTools {
         
         StringBuilder response = new StringBuilder();
         response.append("📡 Manual Data Sync Status:\n");
-        response.append("=".repeat(30)).append("\n");
+        response.append(SHORT_SEPARATOR_LINE).append("\n");
         response.append(String.format("Status: %s\n", status.getActivityLevel()));
         response.append(String.format("Progress: %d/%d documents\n", 
                                     status.getProgress().getCompleted(), 
@@ -94,32 +116,47 @@ public class ManualSearchTools {
         if (status.getError() != null) {
             response.append(String.format("❌ Error: %s\n", status.getError().getMessage()));
         } else if (status.getActivityLevel() == ReplicatorActivityLevel.IDLE && manualCount > 0) {
-            response.append("✅ Manual data is synchronized\n");
+            response.append(SUCCESS_CHECKMARK + " Manual data is synchronized\n");
         } else if (status.getActivityLevel() == ReplicatorActivityLevel.BUSY) {
-            response.append("🔄 Synchronizing manual data...\n");
+            response.append(SYNC_ICON + " Synchronizing manual data...\n");
         }
         
         logToFile(String.format("Sync status requested - Status: %s, Local manuals: %d", 
                                status.getActivityLevel(), manualCount));
+        long duration = System.currentTimeMillis() - startTime;
+        logToolEnd("getSyncStatus", response.toString(), duration);
         return response.toString();
     }
     
     @Tool("Force manual data synchronization from Capella")
     public String forceSyncManuals() {
+        long startTime = System.currentTimeMillis();
+        logToolStart("forceSyncManuals");
         if (downwardReplicator == null) {
-            return logAndReturn("❌ Manual replication not configured");
+            String msg = logAndReturn(ERROR_PREFIX + "Manual replication not configured");
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("forceSyncManuals", msg, duration);
+            return msg;
         }
         
         try {
-            logToFile("🔄 Forcing manual data sync from Capella...");
+            logToFile(SYNC_ICON + " Forcing manual data sync from Capella...");
             restartReplication();
             logToFile("Manual sync initiated successfully");
-            return "🔄 Manual sync initiated. Use getSyncStatus() to monitor progress.";
+            String response = SYNC_ICON + " Manual sync initiated. Use getSyncStatus() to monitor progress.";
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("forceSyncManuals", response, duration);
+            return response;
             
         } catch (TimeoutException e) {
-            return logAndReturn("⚠️ Sync restart timed out, but may still be in progress");
+            long duration = System.currentTimeMillis() - startTime;
+            String msg = "⚠️ Sync restart timed out, but may still be in progress";
+            logToolError("forceSyncManuals", e, duration);
+            return logAndReturn(msg);
         } catch (Exception e) {
-            return logAndReturn(String.format("❌ Error forcing sync: %s", e.getMessage()));
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("forceSyncManuals", e, duration);
+            return logAndReturn(String.format(ERROR_PREFIX + "forcing sync: %s", e.getMessage()));
         }
     }
     
@@ -141,9 +178,9 @@ public class ManualSearchTools {
     private String formatSearchResults(String query, List<VectorSearchUtil.VectorSearchResult> results, 
                                      long totalManuals, String machineType) {
         StringBuilder response = new StringBuilder();
-        response.append(String.format("📚 Manual Search Results for '%s' (searched %d local manuals):\n", 
-                                     query, totalManuals));
-        response.append("=".repeat(50)).append("\n");
+        response.append(String.format("%s Manual Search Results for '%s' (searched %d local manuals):\n", 
+                                     BOOK_ICON, query, totalManuals));
+        response.append(SEPARATOR_LINE).append("\n");
         
         if (results.isEmpty()) {
             response.append("No relevant manuals found for the given query.\n");
@@ -156,7 +193,7 @@ public class ManualSearchTools {
             Map<String, Object> manual = result.getDocument();
             
             // Filter by machine type if specified
-            if (machineType != null && !machineType.equals("any")) {
+            if (machineType != null && !machineType.equals(MANUAL_TYPE_FILTER_ANY)) {
                 String docMachineType = (String) manual.get("machine_type");
                 if (docMachineType != null && !docMachineType.equalsIgnoreCase(machineType)) {
                     continue;
@@ -216,30 +253,9 @@ public class ManualSearchTools {
         }
     }
     
-    private void initializeFileLogging() {
-        try {
-            new java.io.File("data").mkdirs();
-            logWriter = new PrintWriter(new FileWriter(LOG_FILE_PATH, true));
-            logToFile("=== ManualSearchTools logging session started ===");
-            
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                if (logWriter != null) {
-                    logToFile("=== ManualSearchTools logging session ended ===");
-                    logWriter.close();
-                }
-            }));
-            
-        } catch (IOException e) {
-            System.err.println("❌ Failed to initialize file logging: " + e.getMessage());
-        }
-    }
-    
-    private void logToFile(String message) {
-        if (logWriter != null) {
-            String timestamp = LocalDateTime.now().format(LOG_TIMESTAMP_FORMAT);
-            logWriter.println(String.format("[%s] %s", timestamp, message));
-            logWriter.flush();
-        }
+        private void logToFile(String message) {
+        // File logging removed; now delegate to shared logger
+        logger.info(message);
     }
     
     private String logAndReturn(String message) {
@@ -329,25 +345,15 @@ public class ManualSearchTools {
      */
     public void shutdown() {
         if (downwardReplicator != null && isReplicationActive) {
-            logToFile("⏹️ Stopping manual data replication...");
+            logger.info("⏹️ Stopping manual data replication...");
             downwardReplicator.stop();
-            
             try {
                 waitForReplicationStop();
-                logToFile("✅ Manual data replication stopped successfully");
-            } catch (TimeoutException e) {
-                logToFile("⚠️ Manual replication stop timed out");
+                logger.info("✅ Manual data replication stopped successfully");
             } catch (Exception e) {
-                logToFile("❌ Error stopping manual replication: " + e.getMessage());
+                logger.warn("⚠️ Issue while stopping replication: {}", e.getMessage());
             }
-            
             isReplicationActive = false;
-        }
-        
-        if (logWriter != null) {
-            logToFile("=== ManualSearchTools shutdown completed ===");
-            logWriter.close();
-            logWriter = null;
         }
     }
     

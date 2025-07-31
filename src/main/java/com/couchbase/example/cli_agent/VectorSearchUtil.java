@@ -32,7 +32,7 @@ import dev.langchain4j.data.embedding.Embedding;
  */
 public class VectorSearchUtil {
     
-    // Constants
+    // Configuration Constants
     private static final int DEFAULT_VECTOR_DIMENSIONS = 768;
     private static final int DEFAULT_VECTOR_CENTROIDS = 1;
     private static final int DEFAULT_NUM_PROBES = 1;
@@ -44,6 +44,15 @@ public class VectorSearchUtil {
     private static final DateTimeFormatter LOG_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final int EMBEDDING_TIMEOUT_SECONDS = 20;
     private static final int MAX_RETRIES = 2;
+    private static final int DEFAULT_SEARCH_LIMIT = 10;
+    
+    // UI Constants
+    private static final String ERROR_PREFIX = "❌ ";
+    private static final String SUCCESS_PREFIX = "✅ ";
+    private static final String SEARCH_ICON = "🔍";
+    private static final String BOOK_ICON = "📚";
+    private static final String STATS_ICON = "📊";
+    private static final String WRENCH_ICON = "🔧";
     
     // Instance variables
     private final Database database;
@@ -92,7 +101,7 @@ public class VectorSearchUtil {
             return true;
             
         } catch (CouchbaseLiteException e) {
-            logToFile("❌ Failed to create indexes: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Failed to create indexes: " + e.getMessage());
             return false;
         }
     }
@@ -112,7 +121,7 @@ public class VectorSearchUtil {
             Embedding embedding = embeddingModel.embed(text).content();
             return embedding.vector();
         } catch (Exception e) {
-            logToFile("❌ Error generating embedding: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Error generating embedding: " + e.getMessage());
             return new float[DEFAULT_VECTOR_DIMENSIONS]; // Return zero vector as fallback
         }
     }
@@ -131,7 +140,7 @@ public class VectorSearchUtil {
                                                String textField, int limit, double threshold) {
         try {
             float[] queryEmbedding = generateEmbedding(queryText);
-            logToFile("🔍 Performing vector search for: '" + queryText + "'");
+            logToFile(SEARCH_ICON + " Performing vector search for: '" + queryText + "'");
             
             String embeddingExpression = String.format("prediction(%s, {'text': %s}).embedding", 
                 GOOGLE_EMBEDDING_MODEL, textField);
@@ -145,11 +154,11 @@ public class VectorSearchUtil {
             
             List<VectorSearchResult> results = executeVectorSearch(query, threshold);
             
-            logToFile("🔍 Vector search completed: " + results.size() + " results for '" + queryText + "'");
+            logToFile(SEARCH_ICON + " Vector search completed: " + results.size() + " results for '" + queryText + "'");
             return results;
             
         } catch (CouchbaseLiteException e) {
-            logToFile("❌ Vector search failed: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Vector search failed: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -158,7 +167,7 @@ public class VectorSearchUtil {
      * Perform vector search with default parameters
      */
     public List<VectorSearchResult> vectorSearch(Collection collection, String queryText, String textField) {
-        return vectorSearch(collection, queryText, textField, 10, DEFAULT_SIMILARITY_THRESHOLD);
+        return vectorSearch(collection, queryText, textField, DEFAULT_SEARCH_LIMIT, DEFAULT_SIMILARITY_THRESHOLD);
     }
     
     /**
@@ -175,12 +184,12 @@ public class VectorSearchUtil {
                 Result result = results.next();
                 if (result != null) {
                     int count = result.getInt("count");
-                    logToFile("📚 Found " + count + " synced manual chunks from Capella");
+                    logToFile(BOOK_ICON + " Found " + count + " synced manual chunks from Capella");
                     return count;
                 }
             }
         } catch (CouchbaseLiteException e) {
-            logToFile("❌ Error counting synced manual chunks: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Error counting synced manual chunks: " + e.getMessage());
         }
         return 0;
     }
@@ -207,9 +216,9 @@ public class VectorSearchUtil {
                 }
             }
             
-            logToFile("🔧 Available machine types: " + machineTypes);
+            logToFile(WRENCH_ICON + " Available machine types: " + machineTypes);
         } catch (CouchbaseLiteException e) {
-            logToFile("❌ Error getting machine types: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Error getting machine types: " + e.getMessage());
         }
         
         return machineTypes;
@@ -235,14 +244,14 @@ public class VectorSearchUtil {
                     int dimensions = config != null ? (int) config.getDimensions() : DEFAULT_VECTOR_DIMENSIONS;
                     int centroids = config != null ? (int) config.getCentroids() : DEFAULT_VECTOR_CENTROIDS;
                     
-                    logToFile("📊 Index stats requested for " + collection.getName() + " - " + totalDocs + " documents");
+                    logToFile(STATS_ICON + " Index stats requested for " + collection.getName() + " - " + totalDocs + " documents");
                     
                     return new VectorIndexStats(indexName, totalDocs, dimensions, centroids);
                 }
             }
             
         } catch (CouchbaseLiteException e) {
-            logToFile("❌ Error getting index stats: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Error getting index stats: " + e.getMessage());
         }
         
         return new VectorIndexStats("unknown", 0, 0, 0);
@@ -257,9 +266,9 @@ public class VectorSearchUtil {
         
         try {
             Database.prediction.unregisterModel(GOOGLE_EMBEDDING_MODEL);
-            logToFile("✅ Embedding model unregistered");
+            logToFile(SUCCESS_PREFIX + "Embedding model unregistered");
         } catch (Exception e) {
-            logToFile("❌ Error unregistering model: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Error unregistering model: " + e.getMessage());
         }
         
         if (logWriter != null) {
@@ -307,17 +316,17 @@ public class VectorSearchUtil {
                         return result;
                         
                     } catch (Exception e) {
-                        logToFile("❌ Error generating embedding in prediction: " + e.getMessage());
+                        logToFile(ERROR_PREFIX + "Error generating embedding in prediction: " + e.getMessage());
                         return new MutableDictionary();
                     }
                 }
             };
             
             Database.prediction.registerModel(GOOGLE_EMBEDDING_MODEL, embeddingPredictiveModel);
-            System.out.println("✅ Embedding model registered with CBLite prediction using LangChain4J");
+            System.out.println(SUCCESS_PREFIX + "Embedding model registered with CBLite prediction using LangChain4J");
             
         } catch (Exception e) {
-            System.err.println("❌ Failed to register embedding model: " + e.getMessage());
+            System.err.println(ERROR_PREFIX + "Failed to register embedding model: " + e.getMessage());
         }
     }
     
@@ -339,7 +348,7 @@ public class VectorSearchUtil {
     
     private void logIndexCreation(String collectionName, String textIndexName, String predictionIndexName, 
                                 String textField, int dimensions, int centroids) {
-        System.out.println("✅ Vector indexes created for synced manual chunks: " + collectionName);
+        System.out.println(SUCCESS_PREFIX + "Vector indexes created for synced manual chunks: " + collectionName);
         System.out.println("   - Text index: " + textIndexName);
         System.out.println("   - Vector index: " + predictionIndexName);
         System.out.println("   - Text field: " + textField);
@@ -390,7 +399,7 @@ public class VectorSearchUtil {
                 }
             }
         } catch (CouchbaseLiteException e) {
-            logToFile("❌ Error executing vector search: " + e.getMessage());
+            logToFile(ERROR_PREFIX + "Error executing vector search: " + e.getMessage());
             return new ArrayList<>();
         }
         
@@ -424,7 +433,7 @@ public class VectorSearchUtil {
             }));
             
         } catch (IOException e) {
-            System.err.println("❌ Failed to initialize file logging for VectorSearchUtil: " + e.getMessage());
+            System.err.println(ERROR_PREFIX + "Failed to initialize file logging for VectorSearchUtil: " + e.getMessage());
         }
     }
     

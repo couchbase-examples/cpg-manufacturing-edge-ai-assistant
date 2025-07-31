@@ -11,9 +11,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.*;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import static com.couchbase.example.cli_agent.ToolTraceLogger.*;
 
 /**
  * LangChain4j Tools for accessing CPG operational data from Couchbase Edge Server API
@@ -26,8 +24,17 @@ import java.time.format.DateTimeFormatter;
  * - Historical data queries for troubleshooting
  */
 public class EdgeServerTools {
-    private static final Logger logger = LoggerFactory.getLogger(EdgeServerTools.class);
-    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+    // Constants
+    private static final String ERROR_PREFIX = "❌ Error retrieving CPG ";
+    private static final String SEPARATOR_LINE = "=".repeat(55);
+    private static final String SHORT_SEPARATOR_LINE = "=".repeat(35);
+    private static final String MEDIUM_SEPARATOR_LINE = "=".repeat(45);
+    private static final String LARGE_SEPARATOR_LINE = "=".repeat(50);
+    private static final String SMALL_SEPARATOR_LINE = "=".repeat(40);
+    private static final String DEFAULT_STATUS_NORMAL = "normal";
+    
+    // Use shared logger for all tool tracing
+    private static final Logger logger = com.couchbase.example.cli_agent.ToolTraceLogger.LOGGER;
     
     private final String bucketName = "cpg_manufacturing";
     private final String scopeName = "manufacturing";
@@ -76,7 +83,7 @@ public class EdgeServerTools {
             } else {
                 StringBuilder responseBuilder = new StringBuilder();
                 responseBuilder.append(String.format("📊 Recent CPG Telemetry for Machine %s (%d entries):\n", machineId, results.size()));
-                responseBuilder.append("=".repeat(55)).append("\n");
+                responseBuilder.append(SEPARATOR_LINE).append("\n");
                 
                 for (Map<String, Object> telemetry : results) {
                     responseBuilder.append(String.format("🕒 %s | ", telemetry.get("timestamp")));
@@ -113,7 +120,7 @@ public class EdgeServerTools {
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
             logToolError("getRecentTelemetry", e, duration);
-            return String.format("❌ Error retrieving CPG telemetry data: %s", e.getMessage());
+            return String.format(ERROR_PREFIX + "telemetry data: %s", e.getMessage());
         }
     }
     
@@ -160,7 +167,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🔍 CPG Alerts for Error Code %s (%d entries):\n", errorCode, results.size()));
-            response.append("=".repeat(55)).append("\n");
+            response.append(SEPARATOR_LINE).append("\n");
             
             for (Map<String, Object> alert : results) {
                 response.append(String.format("🕒 %s | Machine: %s (%s)\n", 
@@ -241,7 +248,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("📱 CPG Device Status for %s:\n", deviceId));
-            response.append("=".repeat(35)).append("\n");
+            response.append(SHORT_SEPARATOR_LINE).append("\n");
             response.append(String.format("🔌 Status: %s\n", status.get("status")));
             response.append(String.format("📊 Memory Usage: %s MB\n", status.get("memory_usage_mb")));
             response.append(String.format("⚡ CPU Usage: %s%%\n", status.get("cpu_usage_percent")));
@@ -294,7 +301,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("📈 CPG Production Metrics for Line %s:\n", productionLine));
-            response.append("=".repeat(45)).append("\n");
+            response.append(MEDIUM_SEPARATOR_LINE).append("\n");
             
             for (Map<String, Object> metric : results) {
                 response.append(String.format("🕒 %s\n", metric.get("timestamp")));
@@ -343,6 +350,9 @@ public class EdgeServerTools {
     @Tool("Get quality metrics for CPG production monitoring")
     public String getQualityMetrics(String machineId, 
             @P(value = "Maximum number of results to return", required = false) Integer limitResults) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getQualityMetrics", "machineId", machineId, "limitResults", limitResults);
+        
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("MACHINE_ID", machineId);
@@ -358,7 +368,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🔍 CPG Quality Metrics for Machine %s:\n", machineId));
-            response.append("=".repeat(50)).append("\n");
+            response.append(LARGE_SEPARATOR_LINE).append("\n");
             
             for (Map<String, Object> quality : results) {
                 response.append(String.format("🕒 %s\n", quality.get("timestamp")));
@@ -382,9 +392,13 @@ public class EdgeServerTools {
                 response.append("\n");
             }
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getQualityMetrics", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getQualityMetrics", e, duration);
             return String.format("❌ Error retrieving CPG quality metrics: %s", e.getMessage());
         }
     }
@@ -392,6 +406,9 @@ public class EdgeServerTools {
     @Tool("Get telemetry data for specific sensor type across CPG machines")
     public String getTelemetryBySensorType(String sensorType, 
             @P(value = "Maximum number of results to return", required = false) Integer limitResults) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getTelemetryBySensorType", "sensorType", sensorType, "limitResults", limitResults);
+        
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("SENSOR_TYPE", sensorType);
@@ -407,7 +424,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🔧 CPG %s Sensor Data (%d readings):\n", sensorType, results.size()));
-            response.append("=".repeat(55)).append("\n");
+            response.append(SEPARATOR_LINE).append("\n");
             
             Map<String, List<Map<String, Object>>> groupedByMachine = groupByMachine(results);
             
@@ -421,7 +438,7 @@ public class EdgeServerTools {
                     response.append(String.format("   %s: %s %s", 
                         reading.get("timestamp"), reading.get("value"), reading.get("unit")));
                     
-                    if (reading.get("status") != null && !"normal".equals(reading.get("status"))) {
+                    if (reading.get("status") != null && !DEFAULT_STATUS_NORMAL.equals(reading.get("status"))) {
                         response.append(String.format(" ⚠️ %s", reading.get("status")));
                     }
                     
@@ -433,9 +450,13 @@ public class EdgeServerTools {
                 response.append("\n");
             }
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getTelemetryBySensorType", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getTelemetryBySensorType", e, duration);
             return String.format("❌ Error retrieving CPG sensor data: %s", e.getMessage());
         }
     }
@@ -443,6 +464,9 @@ public class EdgeServerTools {
     @Tool("Get maintenance alerts and schedules for CPG equipment")
     public String getMaintenanceAlerts(
             @P(value = "Maximum number of results to return", required = false) Integer limitResults) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getMaintenanceAlerts", "limitResults", limitResults);
+        
         try {
             Map<String, Object> params = new HashMap<>();
             if (limitResults != null) {
@@ -457,7 +481,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🔧 CPG Maintenance Alerts (%d total):\n", results.size()));
-            response.append("=".repeat(40)).append("\n");
+            response.append(SMALL_SEPARATOR_LINE).append("\n");
             
             for (Map<String, Object> alert : results) {
                 response.append(String.format("🔧 %s\n", alert.get("message")));
@@ -468,19 +492,26 @@ public class EdgeServerTools {
                 response.append(String.format("   Scheduled: %s\n\n", alert.get("timestamp")));
             }
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getMaintenanceAlerts", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getMaintenanceAlerts", e, duration);
             return String.format("❌ Error retrieving CPG maintenance alerts: %s", e.getMessage());
         }
     }
     
     @Tool("Get comprehensive production summary for CPG troubleshooting")
     public String getProductionSummary(String productionLine) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getProductionSummary", "productionLine", productionLine);
+        
         try {
             StringBuilder response = new StringBuilder();
             response.append(String.format("📊 CPG Production Summary for %s:\n", productionLine));
-            response.append("=".repeat(50)).append("\n");
+            response.append(LARGE_SEPARATOR_LINE).append("\n");
             
             // Get recent production metrics
             Map<String, Object> metricsParams = new HashMap<>();
@@ -530,9 +561,13 @@ public class EdgeServerTools {
                 response.append(String.format("   Quality Grade: %s\n\n", latestQuality.get("quality_grade")));
             }
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getProductionSummary", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getProductionSummary", e, duration);
             return String.format("❌ Error retrieving CPG production summary: %s", e.getMessage());
         }
     }
@@ -551,7 +586,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🏭 CPG Manufacturing Machines (%d total):\n", results.size()));
-            response.append("=".repeat(55)).append("\n");
+            response.append(SEPARATOR_LINE).append("\n");
             
             for (Map<String, Object> rawMachine : results) {
                 Map<String, Object> machine = extractDocumentData(rawMachine);
@@ -576,6 +611,9 @@ public class EdgeServerTools {
     
     @Tool("Get machine details by machine ID")
     public String getMachineById(String machineId) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getMachineById", "machineId", machineId);
+        
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("MACHINE_ID", machineId);
@@ -591,7 +629,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🔧 CPG Machine Details: %s\n", machineId));
-            response.append("=".repeat(40)).append("\n");
+            response.append(SMALL_SEPARATOR_LINE).append("\n");
             response.append(String.format("📋 Name: %s\n", machine.get("name")));
             response.append(String.format("🏭 Plant ID: %s\n", machine.get("plant_id")));
             response.append(String.format("📈 Production Line: %s\n", machine.get("production_line_id")));
@@ -603,15 +641,22 @@ public class EdgeServerTools {
             response.append(String.format("📊 Status: %s\n", machine.get("status")));
             response.append(String.format("📅 Created: %s\n", machine.get("created_date")));
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getMachineById", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getMachineById", e, duration);
             return String.format("❌ Error retrieving machine %s: %s", machineId, e.getMessage());
         }
     }
     
     @Tool("List all production lines in the CPG manufacturing facility")
     public String listAllProductionLines() {
+        long startTime = System.currentTimeMillis();
+        logToolStart("listAllProductionLines");
+        
         try {
             List<Map<String, Object>> results = executeNamedQuery("list_all_production_lines", new HashMap<>());
             
@@ -621,7 +666,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("📈 CPG Production Lines (%d total):\n", results.size()));
-            response.append("=".repeat(55)).append("\n");
+            response.append(SEPARATOR_LINE).append("\n");
             
             for (Map<String, Object> rawLine : results) {
                 Map<String, Object> line = extractDocumentData(rawLine);
@@ -634,15 +679,22 @@ public class EdgeServerTools {
                 response.append(String.format("   Capacity: %s units/hour | Efficiency: %s%%\n\n", 
                     line.get("capacity_units_per_hour"), line.get("efficiency_percentage")));
             }
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("listAllProductionLines", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("listAllProductionLines", e, duration);
             return String.format("❌ Error retrieving CPG production lines: %s", e.getMessage());
         }
     }
     
     @Tool("Get specific production line details by production line ID")
     public String getProductionLineById(String productionLineId) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getProductionLineById", "productionLineId", productionLineId);
+        
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("PRODUCTION_LINE_ID", productionLineId);
@@ -658,7 +710,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("📈 Production Line Details: %s\n", productionLineId));
-            response.append("=".repeat(45)).append("\n");
+            response.append(MEDIUM_SEPARATOR_LINE).append("\n");
             response.append(String.format("🏭 Plant ID: %s\n", line.get("plant_id")));
             response.append(String.format("🔧 Line Type: %s\n", line.get("line_type")));
             response.append(String.format("📊 Status: %s\n", line.get("status")));
@@ -669,15 +721,22 @@ public class EdgeServerTools {
             response.append(String.format("👥 Shift Schedule: %s\n", line.get("shift_schedule")));
             response.append(String.format("📅 Created: %s\n", line.get("created_date")));
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getProductionLineById", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getProductionLineById", e, duration);
             return String.format("❌ Error retrieving production line %s: %s", productionLineId, e.getMessage());
         }
     }
     
     @Tool("List all plants in the CPG manufacturing organization")
     public String listAllPlants() {
+        long startTime = System.currentTimeMillis();
+        logToolStart("listAllPlants");
+        
         try {
             List<Map<String, Object>> results = executeNamedQuery("list_all_plants", new HashMap<>());
             
@@ -687,7 +746,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🏭 CPG Manufacturing Plants (%d total):\n", results.size()));
-            response.append("=".repeat(55)).append("\n");
+            response.append(SEPARATOR_LINE).append("\n");
             
             for (Map<String, Object> rawPlant : results) {
                 Map<String, Object> plant = extractDocumentData(rawPlant);
@@ -701,15 +760,22 @@ public class EdgeServerTools {
                 response.append(String.format("   ⭐ Certification: %s\n\n", plant.get("quality_certification")));
             }
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("listAllPlants", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("listAllPlants", e, duration);
             return String.format("❌ Error retrieving CPG plants: %s", e.getMessage());
         }
     }
     
     @Tool("Get specific plant details by plant ID")
     public String getPlantById(String plantId) {
+        long startTime = System.currentTimeMillis();
+        logToolStart("getPlantById", "plantId", plantId);
+        
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("PLANT_ID", plantId);
@@ -725,7 +791,7 @@ public class EdgeServerTools {
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🏭 Plant Details: %s\n", plantId));
-            response.append("=".repeat(35)).append("\n");
+            response.append(SHORT_SEPARATOR_LINE).append("\n");
             response.append(String.format("📋 Name: %s\n", plant.get("name")));
             response.append(String.format("📍 Location: %s\n", plant.get("location")));
             response.append(String.format("📊 Status: %s\n", plant.get("status")));
@@ -737,9 +803,13 @@ public class EdgeServerTools {
             response.append(String.format("🌍 Timezone: %s\n", plant.get("timezone")));
             response.append(String.format("📅 Created: %s\n", plant.get("created_date")));
             
+            long duration = System.currentTimeMillis() - startTime;
+            logToolEnd("getPlantById", response.toString(), duration);
             return response.toString();
             
         } catch (Exception e) {
+            long duration = System.currentTimeMillis() - startTime;
+            logToolError("getPlantById", e, duration);
             return String.format("❌ Error retrieving plant %s: %s", plantId, e.getMessage());
         }
     }
@@ -879,71 +949,5 @@ public class EdgeServerTools {
         return queryResult;
     }
     
-    /**
-     * Helper method to log tool call starts with parameters
-     */
-    private void logToolStart(String toolName, Object... params) {
-        String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMAT);
-        StringBuilder logMessage = new StringBuilder();
-        logMessage.append(String.format("[%s] TOOL_CALL_START: %s", timestamp, toolName));
-        
-        if (params.length > 0) {
-            logMessage.append(" | Parameters: ");
-            for (int i = 0; i < params.length; i += 2) {
-                if (i + 1 < params.length) {
-                    logMessage.append(String.format("%s=%s", params[i], params[i + 1]));
-                    if (i + 2 < params.length) {
-                        logMessage.append(", ");
-                    }
-                }
-            }
-        }
-        
-        logger.info(logMessage.toString());
-    }
-    
-    /**
-     * Helper method to log tool call completion with result summary
-     */
-    private void logToolEnd(String toolName, Object result, long durationMs) {
-        String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMAT);
-        String resultSummary = getResultSummary(result);
-        logger.info(String.format("[%s] TOOL_CALL_END: %s | Duration: %dms | Result: %s", 
-            timestamp, toolName, durationMs, resultSummary));
-    }
-    
-    /**
-     * Helper method to log tool call errors
-     */
-    private void logToolError(String toolName, Exception error, long durationMs) {
-        String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMAT);
-        logger.error(String.format("[%s] TOOL_CALL_ERROR: %s | Duration: %dms | Error: %s", 
-            timestamp, toolName, durationMs, error.getMessage()), error);
-    }
-    
-    /**
-     * Helper method to create a summary of the result for logging
-     */
-    private String getResultSummary(Object result) {
-        if (result == null) {
-            return "null";
-        }
-        
-        if (result instanceof String) {
-            String str = (String) result;
-            return str.length() > 100 ? str.substring(0, 100) + "..." : str;
-        }
-        
-        if (result instanceof List) {
-            List<?> list = (List<?>) result;
-            return String.format("List[%d items]", list.size());
-        }
-        
-        if (result instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) result;
-            return String.format("Map[%d keys]", map.size());
-        }
-        
-        return result.getClass().getSimpleName();
-    }
+
 } 
