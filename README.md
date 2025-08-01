@@ -204,7 +204,7 @@ erDiagram
 git clone <repository-url>
 cd cpg-manufacturing-edge-ai-assistant
 
-# Set up environment variables
+# Set up environment variables (setup.sh)
 export GOOGLE_GEMINI_API_KEY="your-api-key-here"
 export APP_SERVICES_ENDPOINT="your-cluster.apps.cloud.couchbase.com"
 export APP_SERVICES_USERNAME="your-app-services-username"
@@ -217,6 +217,8 @@ export APP_NAME="CPG Manufacturing AI Assistant"
 
 # Make scripts executable
 chmod +x run-edge-server.sh run-java-app.sh setup.sh
+# Set setup.sh as source to set environment variables
+source setup.sh
 ```
 
 ### 3. Start Edge Server
