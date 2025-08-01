@@ -141,7 +141,7 @@ erDiagram
 ### Prerequisites
 
 - **Docker & Docker Compose** (20.10+)
-- **Java 17+** (for local development)
+- **Java 21+** (for local development)
 - **Python 3.8+** (for setup scripts)
 - **Google Gemini API Key** (for AI features)
 - **Couchbase Capella Account** (for cloud sync)
