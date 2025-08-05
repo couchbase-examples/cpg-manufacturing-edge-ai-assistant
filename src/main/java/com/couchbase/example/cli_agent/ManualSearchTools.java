@@ -62,7 +62,7 @@ public class ManualSearchTools {
         long startTime = System.currentTimeMillis();
         logToolStart("searchManuals", "query", query);
         try {
-            logToFile(String.format(SEARCH_ICON + " Searching manuals for: '%s' (machine type: %s)", query));
+            logToFile(String.format(SEARCH_ICON + " Searching manuals for: '%s'", query));
             
             long manualCount = manualsCollection.getCount();
             if (manualCount == 0) {
