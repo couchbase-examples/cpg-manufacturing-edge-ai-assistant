@@ -21,12 +21,12 @@
         "production_summary_metrics": "SELECT * FROM _ WHERE production_line = $PRODUCTION_LINE ORDER BY timestamp DESC LIMIT 3",
         "production_summary_alerts": "SELECT * FROM _ WHERE status = 'active' AND production_line = $PRODUCTION_LINE ORDER BY severity DESC LIMIT 5",
         "production_summary_quality": "SELECT * FROM _ WHERE production_line = $PRODUCTION_LINE ORDER BY timestamp DESC LIMIT 1",
-        "list_all_machines": "SELECT * FROM _ ORDER BY plant_id, production_line_id, machine_id",
-        "machine_by_id": "SELECT * FROM _ WHERE machine_id = $MACHINE_ID",
-        "list_all_production_lines": "SELECT * FROM _ ORDER BY plant_id, production_line_id",
-        "production_line_by_id": "SELECT * FROM _ WHERE production_line_id = $PRODUCTION_LINE_ID",
-        "list_all_plants": "SELECT * FROM _ ORDER BY plant_id",
-        "plant_by_id": "SELECT * FROM _ WHERE plant_id = $PLANT_ID",
+        "list_all_machines": "SELECT *, meta().id AS id FROM _ ORDER BY plant_id, production_line_id, meta().id",
+        "machine_by_id": "SELECT *, meta().id AS id FROM _ WHERE meta().id = $MACHINE_ID",
+        "list_all_production_lines": "SELECT *, meta().id AS id FROM _ ORDER BY plant_id, meta().id",
+        "production_line_by_id": "SELECT *, meta().id AS id FROM _ WHERE meta().id = $PRODUCTION_LINE_ID",
+        "list_all_plants": "SELECT *, meta().id AS id FROM _ ORDER BY meta().id",
+        "plant_by_id": "SELECT *, meta().id AS id FROM _ WHERE meta().id = $PLANT_ID",
         "list_all_solutions_for_error_code": "SELECT error_code, solution_comment FROM _ WHERE error_code = $ERROR_CODE ORDER BY success_rate DESC LIMIT 10"
       },
       "collections": {
@@ -89,14 +89,14 @@
         },
         "manufacturing.production_lines": {
           "indexes": {
-            "byLineId": "production_line_id",
+            "byLineId": "meta().id",
             "byStatus": "status",
             "byProductType": "current_product"
           }
         },
         "manufacturing.machines": {
           "indexes": {
-            "byMachineId": "machine_id",
+            "byMachineId": "meta().id",
             "byMachineType": "machine_type",
             "byProductionLine": "production_line_id",
             "byStatus": "current_status"
@@ -121,7 +121,7 @@
         },
         "manufacturing.plants": {
           "indexes": {
-            "byPlantId": "plant_id",
+            "byPlantId": "meta().id",
             "byName": "name",
             "byLocation": "location"
           }

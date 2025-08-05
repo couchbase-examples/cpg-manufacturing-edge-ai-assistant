@@ -58,11 +58,11 @@ public class ManualSearchTools {
     }
     
     @Tool("Search through equipment manuals and documentation using semantic search")
-    public String searchManuals(String query, String machineType) {
+    public String searchManuals(String query) {
         long startTime = System.currentTimeMillis();
-        logToolStart("searchManuals", "query", query, "machineType", machineType);
+        logToolStart("searchManuals", "query", query);
         try {
-            logToFile(String.format(SEARCH_ICON + " Searching manuals for: '%s' (machine type: %s)", query, machineType));
+            logToFile(String.format(SEARCH_ICON + " Searching manuals for: '%s' (machine type: %s)", query));
             
             long manualCount = manualsCollection.getCount();
             if (manualCount == 0) {
@@ -76,7 +76,7 @@ public class ManualSearchTools {
                 manualsCollection, query, "content", DEFAULT_SEARCH_LIMIT, DEFAULT_SIMILARITY_THRESHOLD
             );
             
-            String response = formatSearchResults(query, vectorResults, manualCount, machineType);
+            String response = formatSearchResults(query, vectorResults, manualCount);
             long duration = System.currentTimeMillis() - startTime;
             logToolEnd("searchManuals", response, duration);
             return response;
@@ -176,7 +176,7 @@ public class ManualSearchTools {
     }
     
     private String formatSearchResults(String query, List<VectorSearchUtil.VectorSearchResult> results, 
-                                     long totalManuals, String machineType) {
+                                     long totalManuals) {
         StringBuilder response = new StringBuilder();
         response.append(String.format("%s Manual Search Results for '%s' %d (searched %d local manuals):\n", 
                                      BOOK_ICON, query, results.size() ,totalManuals));
@@ -191,15 +191,6 @@ public class ManualSearchTools {
         int resultIndex = 1;
         for (VectorSearchUtil.VectorSearchResult result : results) {
             Map<String, Object> manual = result.getDocument();
-            
-            // Filter by machine type if specified
-            if (machineType != null && !machineType.equals(MANUAL_TYPE_FILTER_ANY)) {
-                String docMachineType = (String) manual.get("machine_type");
-                if (docMachineType != null && !docMachineType.equalsIgnoreCase(machineType)) {
-                    continue;
-                }
-            }
-            
             response.append(formatSingleResult(resultIndex++, manual, result));
         }
         

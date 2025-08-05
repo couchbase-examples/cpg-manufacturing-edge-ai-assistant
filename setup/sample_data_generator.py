@@ -101,8 +101,19 @@ class SampleDataGenerator:
 
     def _store_document_directly(self, doc_id: str, document: Dict[str, Any], collection_type: str):
         """Store document directly as dict without model conversion."""
+        # Remove the entity's own identifier from the body before persisting.
+        doc_copy = document.copy()
+        id_field_map = {
+            "plants": "plant_id",
+            "production_lines": "production_line_id",
+            "machines": "machine_id",
+            "alerts": "alert_id",
+        }
+        id_field = id_field_map.get(collection_type)
+        if id_field:
+            doc_copy.pop(id_field, None)
         self.couchbase_client.store_document(
-            doc_id, document, collection_type=collection_type
+            doc_id, doc_copy, collection_type=collection_type
         )
     
     def generate_plants(self) -> List[Dict[str, Any]]:
@@ -145,7 +156,7 @@ class SampleDataGenerator:
             
             # Store in Couchbase
             self._store_document_directly(
-                f"plant_{plant['plant_id']}",
+                plant['plant_id'],
                 plant,
                 "plants"
             )
@@ -188,7 +199,7 @@ class SampleDataGenerator:
                 
                 # Store in Couchbase
                 self._store_document_directly(
-                    f"production_line_{production_line['production_line_id']}",
+                    production_line['production_line_id'],
                     production_line,
                     "production_lines"
                 )
@@ -212,7 +223,7 @@ class SampleDataGenerator:
                 
                 # Store in Couchbase
                 self._store_document_directly(
-                    f"machine_{writedata_machine['machine_id']}",
+                    writedata_machine['machine_id'],
                     writedata_machine,
                     "machines"
                 )
@@ -256,7 +267,7 @@ class SampleDataGenerator:
                 
                 # Store in Couchbase
                 self._store_document_directly(
-                    f"machine_{machine['machine_id']}",
+                    machine['machine_id'],
                     machine,
                     "machines"
                 )

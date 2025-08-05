@@ -420,7 +420,11 @@ public class CPGIoTTelemetryGenerator {
             for (Map<String, Object> alert : alerts) {
                 try {
                     String docId = (String) alert.get("alert_id");
-                    MutableDocument document = new MutableDocument(docId, alert);
+                    // Remove alert_id from the body before persisting so it only exists as the document key.
+                    Map<String, Object> alertCopy = new HashMap<>(alert);
+                    alertCopy.remove("alert_id");
+
+                    MutableDocument document = new MutableDocument(docId, alertCopy);
                     alertsCollection.save(document);
                     setDocumentExpiration(alertsCollection, docId, SimulationUtils.calculateExpirationDate(IoTDeviceConfig.ALERT_EXPIRATION_DAYS));
                 } catch (CouchbaseLiteException e) {
@@ -583,7 +587,6 @@ public class CPGIoTTelemetryGenerator {
         System.out.println("   - Machine Type: " + IoTDeviceConfig.MACHINE_TYPE);
         System.out.println("   - Product Type: " + IoTDeviceConfig.PRODUCT_TYPE);
         System.out.println("   - Database name: " + database.getName());
-        System.out.println("   - Total documents: " + database.getCount());
         System.out.println("   - Telemetry documents: " + telemetryCollection.getCount());
         System.out.println("   - Alert documents: " + alertsCollection.getCount());
         System.out.println("   - Device status documents: " + deviceStatusCollection.getCount());

@@ -1,4 +1,4 @@
 function (doc, oldDoc, meta) {
-  channel(doc.plant_id);
-  access('admin', doc.plant_id);
+  channel(doc._id);
+  access('admin', doc._id);
 }
