@@ -180,7 +180,7 @@ erDiagram
    # 1. Create App Service endpoint in Capella.
    # 2. Link all the collections to be synced: plants, production_lines, machines, solutions, telemetry, alerts, quality_metrics, device_status.
    # 3. Create an App User under App Users.
-   # 4. In Access Control Validation, set custom sync scripts for plants, production_lines, and machines collections under custom scripts. For other collections, use the default script.
+   # 4. In Access Control Validation, set custom sync scripts for plants, production_lines, and machines collections under custom scripts. For other collections, use the default script. These can be found in the "custom_scripts" directory in the project.
    # 5. Go to App Users, select the user you created, and set the admin channel for the solutions collection to "solutions" and manuals collection to "manuals".
    # 6. Update the App Services configuration to include these settings.
    # 7. Resync all the collections
@@ -204,7 +204,7 @@ erDiagram
 git clone <repository-url>
 cd cpg-manufacturing-edge-ai-assistant
 
-# Set up environment variables
+# Set up environment variables (setup.sh)
 export GOOGLE_GEMINI_API_KEY="your-api-key-here"
 export APP_SERVICES_ENDPOINT="your-cluster.apps.cloud.couchbase.com"
 export APP_SERVICES_USERNAME="your-app-services-username"
@@ -217,6 +217,8 @@ export APP_NAME="CPG Manufacturing AI Assistant"
 
 # Make scripts executable
 chmod +x run-edge-server.sh run-java-app.sh setup.sh
+# Set setup.sh as source to set environment variables
+source setup.sh
 ```
 
 ### 3. Start Edge Server
