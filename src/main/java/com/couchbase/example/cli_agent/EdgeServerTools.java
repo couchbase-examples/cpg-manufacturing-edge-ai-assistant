@@ -194,7 +194,6 @@ public class EdgeServerTools {
             for (Map<String, Object> alert : results) {
                 response.append(String.format("🕒 %s | Machine: %s (%s)\n", 
                     alert.get("timestamp"), alert.get("machine_id"), alert.get("machine_type")));
-                response.append(String.format("📝 %s\n", alert.get("message")));
                 response.append(String.format("⚠️ Severity: %s | Status: %s\n", 
                     alert.get("severity"), alert.get("status")));
                 

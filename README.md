@@ -53,70 +53,97 @@ erDiagram
         string plant_id PK
         string name
         string location
+        string plant_code
+        string facility_type
         string timezone
+        string status
+        string created_date
     }
     
     PRODUCTION_LINES {
         string production_line_id PK
         string plant_id FK
         string name
-        string machine_type
-        string current_product
+        string line_type
+        string primary_product
         string status
+        string created_date
     }
     
     MACHINES {
         string machine_id PK
+        string device_id
         string production_line_id FK
         string plant_id FK
         string machine_type
-        string current_status
-        object specifications
+        string product_type
+        string model
+        string serial_number
+        string status
+        string created_date
     }
     
     TELEMETRY {
         string device_id
         string machine_id FK
+        string machine_type
         string sensor_type
         number value
         string unit
         string timestamp
-        string batch_number
-        string product_code
+        string location
         string status
+        number batch_number
+        string product_code
+        string production_line
+        string product_type
     }
     
     ALERTS {
         string alert_id PK
-        string machine_id FK
         string device_id
+        string machine_id FK
+        string machine_type
         string error_code
         string severity
         string status
-        string message
         string timestamp
-        string batch_number
+        string production_line
+        string product_type
+        number batch_number
+        string product_code
+        number current_value
+        number threshold
+        boolean escalation_required
+        object context
     }
     
     QUALITY_METRICS {
         string device_id
         string machine_id FK
+        string machine_type
         number fill_accuracy_percentage
         number label_alignment_percentage
         number cap_torque_inch_pounds
         string quality_grade
         string timestamp
-        string batch_number
+        number batch_number
+        string product_code
+        string production_line
+        string product_type
     }
     
     DEVICE_STATUS {
         string device_id PK
+        string timestamp
         string status
         number uptime_seconds
         number memory_usage_mb
         number cpu_usage_percent
+        number disk_usage_percent
+        string network_status
         string sync_status
-        string timestamp
+        number documents_pending_sync
     }
     
     SOLUTIONS {
@@ -124,8 +151,19 @@ erDiagram
         string error_code
         string solution_comment
         array embeddings
+        number success_rate
+        string machine_type
         string created_at
         string updated_at
+    }
+    
+    MANUALS {
+        string chunk_id PK
+        string content
+        array embedding
+        object metadata
+        string created_at
+        string last_updated
     }
     
     PLANTS ||--o{ PRODUCTION_LINES : contains
@@ -134,6 +172,7 @@ erDiagram
     MACHINES ||--o{ ALERTS : produces
     MACHINES ||--o{ QUALITY_METRICS : measures
     ALERTS ||--o{ SOLUTIONS : references
+    MANUALS ||--|| MACHINES : documents
 ```
 
 ## 🚀 Quick Start
@@ -282,7 +321,6 @@ mvn exec:java -Dexec.mainClass="com.couchbase.example.cli_agent.CPGCLIAgent"
 "Get troubleshooting procedures for beverage_filling_line"
 ```
 
-
 ### REST API Endpoints
 
 **Edge Server APIs:**
@@ -370,7 +408,6 @@ Key configuration files:
 | `DEVICE_ID` | IoT device identifier | `rpi-cpg-line1-01` |
 | `MACHINE_ID` | Machine identifier | `MACHINE_001` |
 | `PRODUCTION_LINE` | Production line name | `BEVERAGE_LINE_A` |
-
 
 ## 📊 Monitoring & Observability
 
@@ -569,8 +606,6 @@ curl -u username:password https://your-cluster.apps.cloud.couchbase.com:4984/cpg
 TELEMETRY_EXPIRATION_DAYS = 30
 ALERT_EXPIRATION_DAYS = 90
 ```
-
-
 
 ## 📝 License
 

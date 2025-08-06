@@ -350,7 +350,6 @@ class SampleDataGenerator:
             "error_code": alert_template["error_code"],
             "severity": alert_template["severity"].lower(),
             "status": "active",
-            "message": f"Manufacturing alert: {alert_template['solution_comment'][:50]}...",
             "timestamp": timestamp,
             "production_line": machine_config["production_line"],
             "product_type": machine_config["product_type"],
