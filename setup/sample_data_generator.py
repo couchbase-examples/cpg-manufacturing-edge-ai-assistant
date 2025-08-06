@@ -372,12 +372,16 @@ class SampleDataGenerator:
             alert["threshold"] = round(random.uniform(80.0, 120.0), 2)
         
         # Add acknowledged/resolved information for some alerts
-        if random.random() > 0.4:
+        if random.random() > 0.05:
             alert["acknowledged_by"] = random.choice(self.OPERATORS)
-            if random.random() > 0.6:
+            if random.random() > 0.15:                
                 alert["resolved_by"] = random.choice(self.TECHNICIANS)
                 alert["status"] = "resolved"
                 alert["resolution_time"] = (timestamp_3_days_ago + timedelta(hours=random.randint(1, 24))).isoformat() + "Z"
+            else:
+                alert["solution_comment"] = ""
+        else:
+            alert["solution_comment"] = ""
         
         return alert
     

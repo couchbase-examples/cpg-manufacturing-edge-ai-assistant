@@ -836,16 +836,12 @@ public class EdgeServerTools {
     }
 
     @Tool("List all solutions for a specific error code from CPG troubleshooting history")
-    public String listAllSolutionsForErrorCode(String errorCode,
-            @P(value = "Maximum number of results to return", required = false) Integer limitResults) {
+    public String listAllSolutionsForErrorCode(String errorCode) {
         long startTime = System.currentTimeMillis();
-        logToolStart("listAllSolutionsForErrorCode", "errorCode", errorCode, "limitResults", limitResults);
+        logToolStart("listAllSolutionsForErrorCode", "errorCode", errorCode);
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("ERROR_CODE", errorCode);
-            if (limitResults != null) {
-                params.put("maxResults", limitResults);
-            }
             List<Map<String, Object>> results = executeNamedQuery("list_all_solutions_for_error_code", params);
             if (results.isEmpty()) {
                 return String.format("📚 No solutions found for error code %s.", errorCode);
