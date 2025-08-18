@@ -5,24 +5,24 @@ title "CPG Manufacturing Edge AI – Container Diagram"
 
 Person(Technician, "Field Technician / Maintenance Engineer")
 
-System_Boundary(rpi, "Device Layer (Raspberry Pi)") {
+Boundary(rpi, "Device Layer (Raspberry Pi)") {
   Container(IoTApp, "CPGIoTTelemetryGenerator", "Application", "Generates sensor, alert & quality data")
   ContainerDb(DeviceCBLite, "CBLite (Operational)", "Embedded DB", "telemetry, alerts, quality_metrics, device_status")
 }
 
-System_Boundary(edge, "Edge Layer") {
+Boundary(edge, "Edge Layer") {
   Container(EdgeServer, "Couchbase Edge Server", "Docker Container", "Pushes operational data upstream, pulls configuration data, and exposes REST API (:59840)")
 }
 
-System_Boundary(sync, "Sync Layer") {
+Boundary(sync, "Sync Layer") {
   Container(AppSvc, "Capella App Services (Sync Gateway)", "Container", "Channel-based replication (:4984)")
 }
 
-System_Boundary(cloud, "Cloud Layer") {
+Boundary(cloud, "Cloud Layer") {
   ContainerDb(CapellaDB, "Couchbase Capella", "Database", "Master data store (manuals, solutions, operational data)")
 }
 
-System_Boundary(agent, "CPG CLI Agent (Mobile App)") {
+Boundary(agent, "CPG CLI Agent (Mobile App)") {
   Container(AgentLogic, "Agent Logic", "LangChain4j", "Orchestrates reasoning / tool calls")
   Container(EdgeTools, "EdgeServerTools", "Library", "Queries Edge Server")
   Container(ManualTools, "ManualSearchTools", "Library", "Replicates manuals to local CBLite & vector search")
@@ -46,4 +46,6 @@ Rel(ManualTools, AgentCBLite, "stores manuals")
 Rel(AgentLogic, Gemini, "prompt / response")
 Rel(Technician, AgentLogic, "uses")
 
+
+HIDE_STEREOTYPE()
 @enduml
