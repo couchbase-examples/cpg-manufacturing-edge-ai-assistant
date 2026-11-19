@@ -87,8 +87,7 @@ public class EdgeServerTools {
                 responseBuilder.append(String.format("📊 Recent CPG Telemetry for Machine %s (%d entries):\n", machineId, results.size()));
                 responseBuilder.append(SEPARATOR_LINE).append("\n");
                 
-                for (Map<String, Object> rawTelemetry : results) {
-                    Map<String, Object> telemetry = extractDocumentData(rawTelemetry);
+                for (Map<String, Object> telemetry : results) {
                     responseBuilder.append(String.format("🕒 %s | ", telemetry.get("timestamp")));
                     responseBuilder.append(String.format("Sensor: %s | ", telemetry.get("sensor_type")));
                     responseBuilder.append(String.format("Value: %s %s | ", telemetry.get("value"), telemetry.get("unit")));
@@ -173,8 +172,7 @@ public class EdgeServerTools {
             response.append(String.format("🔍 CPG Alerts for Error Code %s (%d entries):\n", errorCode, results.size()));
             response.append(SEPARATOR_LINE).append("\n");
             
-            for (Map<String, Object> rawAlert : results) {
-                Map<String, Object> alert = extractDocumentData(rawAlert);
+            for (Map<String, Object> alert : results) {
                 response.append(String.format("🕒 %s | Machine: %s (%s)\n", 
                     alert.get("timestamp"), alert.get("machine_id"), alert.get("machine_type")));
                 response.append(String.format("⚠️ Severity: %s | Status: %s\n", 
@@ -248,8 +246,7 @@ public class EdgeServerTools {
                 return String.format("No status information found for CPG device: %s", deviceId);
             }
             
-            Map<String, Object> rawStatus = results.get(0);
-            Map<String, Object> status = extractDocumentData(rawStatus);
+            Map<String, Object> status = results.get(0);
 
             
             StringBuilder response = new StringBuilder();
@@ -310,8 +307,7 @@ public class EdgeServerTools {
             response.append(String.format("📈 CPG Production Metrics for Line %s:\n", productionLine));
             response.append(MEDIUM_SEPARATOR_LINE).append("\n");
             
-            for (Map<String, Object> rawMetric : results) {
-                Map<String, Object> metric = extractDocumentData(rawMetric);
+            for (Map<String, Object> metric : results) {
                 response.append(String.format("🕒 %s\n", metric.get("timestamp")));
                 response.append(String.format("🍾 Bottles Produced: %s/min\n", metric.get("bottles_produced_per_minute")));
                 response.append(String.format("⚡ OEE: %s%%\n", metric.get("oee_percentage")));
@@ -379,8 +375,7 @@ public class EdgeServerTools {
             response.append(String.format("🔍 CPG Quality Metrics for Machine %s:\n", machineId));
             response.append(LARGE_SEPARATOR_LINE).append("\n");
             
-            for (Map<String, Object> rawQuality : results) {
-                Map<String, Object> quality = extractDocumentData(rawQuality);
+            for (Map<String, Object> quality : results) {
                 response.append(String.format("🕒 %s\n", quality.get("timestamp")));
                 response.append(String.format("📊 Fill Accuracy: %s%%\n", quality.get("fill_accuracy_percentage")));
                 response.append(String.format("🏷️ Label Alignment: %s%%\n", quality.get("label_alignment_percentage")));
@@ -495,8 +490,7 @@ public class EdgeServerTools {
             response.append(String.format("🔧 CPG Maintenance Alerts (%d total):\n", results.size()));
             response.append(SMALL_SEPARATOR_LINE).append("\n");
             
-            for (Map<String, Object> rawAlert : results) {
-                Map<String, Object> alert = extractDocumentData(rawAlert);
+            for (Map<String, Object> alert : results) {
                 response.append(String.format("🔧 %s\n", alert.get("message")));
                 response.append(String.format("   Machine: %s | Type: %s\n", 
                     alert.get("machine_id"), alert.get("maintenance_type")));
@@ -533,7 +527,7 @@ public class EdgeServerTools {
             
             if (!metrics.isEmpty()) {
                 response.append("📈 RECENT PRODUCTION METRICS:\n");
-                Map<String, Object> latest = extractDocumentData(metrics.get(0));
+                Map<String, Object> latest = metrics.get(0);
                 response.append(String.format("   Bottles/min: %s | OEE: %s%% | Defects: %s%%\n", 
                     latest.get("bottles_produced_per_minute"), 
                     latest.get("oee_percentage"),
@@ -549,8 +543,7 @@ public class EdgeServerTools {
             
             if (!alerts.isEmpty()) {
                 response.append("🚨 ACTIVE ALERTS:\n");
-                for (Map<String, Object> rawAlert : alerts) {
-                    Map<String, Object> alert = extractDocumentData(rawAlert);
+                for (Map<String, Object> alert : alerts) {
                     response.append(String.format("   %s [%s]\n", 
                         getSeverityEmoji((String) alert.get("severity")),
                         alert.get("error_code")));
@@ -566,7 +559,7 @@ public class EdgeServerTools {
             List<Map<String, Object>> quality = executeNamedQuery("production_summary_quality", qualityParams);
             
             if (!quality.isEmpty()) {
-                Map<String, Object> latestQuality = extractDocumentData(quality.get(0));
+                Map<String, Object> latestQuality = quality.get(0);
                 response.append("🔍 QUALITY STATUS:\n");
                 response.append(String.format("   Fill Accuracy: %s%% | Label Alignment: %s%%\n", 
                     latestQuality.get("fill_accuracy_percentage"),
@@ -601,8 +594,7 @@ public class EdgeServerTools {
             response.append(String.format("🏭 CPG Manufacturing Machines (%d total):\n", results.size()));
             response.append(SEPARATOR_LINE).append("\n");
             
-            for (Map<String, Object> rawMachine : results) {
-                Map<String, Object> machine = extractDocumentData(rawMachine);
+            for (Map<String, Object> machine : results) {
                 response.append(String.format("🔧 %s | %s (%s)\n", 
                     machine.get("machine_id"), machine.get("name"), machine.get("machine_type")));
                 response.append(String.format("   Plant: %s | Line: %s | Status: %s\n", 
@@ -637,7 +629,7 @@ public class EdgeServerTools {
                 return String.format("No machine found with ID: %s", machineId);
             }
             
-            Map<String, Object> machine = extractDocumentData(results.get(0));
+            Map<String, Object> machine = results.get(0);
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🔧 CPG Machine Details: %s\n", machineId));
@@ -680,8 +672,7 @@ public class EdgeServerTools {
             response.append(String.format("📈 CPG Production Lines (%d total):\n", results.size()));
             response.append(SEPARATOR_LINE).append("\n");
             
-            for (Map<String, Object> rawLine : results) {
-                Map<String, Object> line = extractDocumentData(rawLine);
+            for (Map<String, Object> line : results) {
                 response.append(String.format("📈 %s | %s\n", 
                     line.get("production_line_id"), line.get("line_type")));
                 response.append(String.format("   Plant: %s | Status: %s\n", 
@@ -717,8 +708,7 @@ public class EdgeServerTools {
                 return String.format("No production line found with ID: %s", productionLineId);
             }
             
-            Map<String, Object> rawLine = results.get(0);
-            Map<String, Object> line = extractDocumentData(rawLine);
+            Map<String, Object> line = results.get(0);
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("📈 Production Line Details: %s\n", productionLineId));
@@ -760,8 +750,7 @@ public class EdgeServerTools {
             response.append(String.format("🏭 CPG Manufacturing Plants (%d total):\n", results.size()));
             response.append(SEPARATOR_LINE).append("\n");
             
-            for (Map<String, Object> rawPlant : results) {
-                Map<String, Object> plant = extractDocumentData(rawPlant);
+            for (Map<String, Object> plant : results) {
                 response.append(String.format("🏭 %s | %s\n", 
                     plant.get("plant_id"), plant.get("name")));
                 response.append(String.format("   📍 Location: %s\n", plant.get("location")));
@@ -798,8 +787,7 @@ public class EdgeServerTools {
                 return String.format("No plant found with ID: %s", plantId);
             }
             
-            Map<String, Object> rawPlant = results.get(0);
-            Map<String, Object> plant = extractDocumentData(rawPlant);
+            Map<String, Object> plant = results.get(0);
             
             StringBuilder response = new StringBuilder();
             response.append(String.format("🏭 Plant Details: %s\n", plantId));
@@ -841,8 +829,7 @@ public class EdgeServerTools {
             response.append(String.format("📚 Solutions for Error Code %s (%d found):\n", errorCode, results.size()));
             response.append("=".repeat(50)).append("\n");
             int idx = 1;
-            for (Map<String, Object> rawSolution : results) {
-                Map<String, Object> solution = extractDocumentData(rawSolution);
+            for (Map<String, Object> solution : results) {
                 response.append(String.format("%d. 💡 %s\n", idx++, solution.getOrDefault("solution_comment", "No details available")));
             }
             long duration = System.currentTimeMillis() - startTime;
@@ -884,23 +871,14 @@ public class EdgeServerTools {
         }
         
         JsonNode responseJson = objectMapper.readTree(response.body());
+        // Edge Server returns either a bare array or {"results": [...]}
+        JsonNode rows = responseJson.isArray() ? responseJson : responseJson.path("results");
         List<Map<String, Object>> results = new ArrayList<>();
-        
-        if (responseJson.isArray()) {
-            // Direct array response
-            for (JsonNode result : responseJson) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> map = objectMapper.convertValue(result, Map.class);
-                results.add(map);
-            }
-        } else if (responseJson.has("results")) {
-            // Wrapped in results object
-            JsonNode resultsArray = responseJson.get("results");
-            for (JsonNode result : resultsArray) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> map = objectMapper.convertValue(result, Map.class);
-                results.add(map);
-            }
+        for (JsonNode row : rows) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = objectMapper.convertValue(row, Map.class);
+            // Unwrap once here so every tool sees plain document fields
+            results.add(extractDocumentData(map));
         }
         
         long duration = System.currentTimeMillis() - startTime;
@@ -965,8 +943,7 @@ public class EdgeServerTools {
     private Map<String, List<Map<String, Object>>> groupByMachine(List<Map<String, Object>> data) {
         Map<String, List<Map<String, Object>>> grouped = new HashMap<>();
         
-        for (Map<String, Object> rawItem : data) {
-            Map<String, Object> item = extractDocumentData(rawItem);
+        for (Map<String, Object> item : data) {
             String machineId = (String) item.get("machine_id");
             grouped.computeIfAbsent(machineId, k -> new ArrayList<>()).add(item);
         }
@@ -975,9 +952,9 @@ public class EdgeServerTools {
     }
     
     /**
-     * Helper method to extract data from nested query results.
-     * Couchbase query results often nest document data under a "_" key.
-     * This method checks for the nested structure and returns the actual data.
+     * Extracts document data from a named-query row.
+     * Edge Server's "SELECT * FROM _" nests document fields under a "_" key.
+     * Applied once per row in {@link #executeNamedQuery}; tools must not call it again.
      */
     @SuppressWarnings("unchecked")
     private Map<String, Object> extractDocumentData(Map<String, Object> queryResult) {
