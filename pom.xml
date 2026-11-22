@@ -18,7 +18,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <couchbase.lite.version>3.2.3</couchbase.lite.version>
-        <jackson.version>2.15.2</jackson.version>
+        <jackson.version>2.21.8</jackson.version>
         <langchain4j.version>1.1.0</langchain4j.version>
     </properties>
     
@@ -28,6 +28,18 @@
             <url>https://mobile.maven.couchbase.com/maven2/dev/</url>
         </repository>
     </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Security: langchain4j 1.1.0 pulls opennlp-tools 2.5.4, affected by
+                 CVE-2026-40682, CVE-2026-42027 (critical) and CVE-2026-42440 (high); fixed in 2.5.9 -->
+            <dependency>
+                <groupId>org.apache.opennlp</groupId>
+                <artifactId>opennlp-tools</artifactId>
+                <version>2.5.13</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Couchbase Lite for Java -->
@@ -61,7 +73,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.2.1</version>
+            <version>5.6.5</version>
         </dependency>
         
         <!-- Logging -->
