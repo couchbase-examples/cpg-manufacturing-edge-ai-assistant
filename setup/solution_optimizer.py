@@ -25,7 +25,7 @@ from couchbase.options import SearchOptions
 from couchbase.vector_search import VectorQuery, VectorSearch
 
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel, ValidationError
 
 from couchbase_client import CouchbaseClient

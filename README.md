@@ -181,7 +181,7 @@ erDiagram
 
 - **Docker & Docker Compose** (20.10+)
 - **Java 21+** (for local development)
-- **Python 3.8+** (for setup scripts)
+- **Python 3.11+** (for setup scripts)
 - **Google Gemini API Key** (for AI features)
 - **Couchbase Capella Account** (for cloud sync)
 
